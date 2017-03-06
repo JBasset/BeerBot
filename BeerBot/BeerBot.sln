@@ -6,15 +6,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestProject", "TestProject\TestProject.csproj", "{08F4AAE5-888A-4F71-92B5-54D7CE05E54B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{435BB1A6-EBA7-4F55-BF99-AF1C65FC43E2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSProlog", "..\..\C#Prolog SF4.1\CSProlog\CSProlog.csproj", "{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSProlog", "..\C#Prolog SF4.1\CSProlog\CSProlog.csproj", "{721E06EF-2BE2-44BF-A0B7-BBE163A29F26}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLd", "..\..\C#Prolog SF4.1\PLd\PLd.csproj", "{B7438FBF-6E46-4065-A60B-1B1CA2AC9875}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLd", "..\C#Prolog SF4.1\PLd\PLd.csproj", "{B7438FBF-6E46-4065-A60B-1B1CA2AC9875}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLw", "..\..\C#Prolog SF4.1\PLw\PLw.csproj", "{BB06ADF9-92C3-4F92-8397-5ACC92208528}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLw", "..\C#Prolog SF4.1\PLw\PLw.csproj", "{BB06ADF9-92C3-4F92-8397-5ACC92208528}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLx", "..\C#Prolog SF4.1\PLx\PLx.csproj", "{E84A59D2-E868-4108-BE9A-55CBB7E85E36}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PLx", "..\..\C#Prolog SF4.1\PLx\PLx.csproj", "{E84A59D2-E868-4108-BE9A-55CBB7E85E36}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
