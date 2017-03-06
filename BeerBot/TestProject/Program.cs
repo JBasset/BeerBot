@@ -12,9 +12,12 @@ namespace TestProject
         static void Main(string[] args)
         {
             /*
+            // For testing the connection to the database :
             OpenBeerDB db = new OpenBeerDB();
             Console.WriteLine(db.DBTest());
             */
+            OpenBeerDB db = new OpenBeerDB();
+            Console.WriteLine(db.nbCat);
         }
     }
 }
