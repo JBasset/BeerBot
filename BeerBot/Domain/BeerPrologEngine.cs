@@ -27,5 +27,38 @@ namespace Domain
 
             }
         }
+
+        public List<string> ask(string functor, string[] args)
+        {
+            // Creating the query's string
+            string query = "";
+            query += functor + "(";
+            foreach(string arg in args)
+                query += arg + ",";
+            query = query.Substring(0, query.Length-1); // suppressing the last comma
+            query += ").";
+
+            // asking the query to the engine
+            e.Query = query;
+            List<string> result = new List<string> { };
+            foreach(PrologEngine.ISolution s in e.SolutionIterator)
+            {
+                result.Add(s.ToString());
+            }
+            return result;
+        }
+
+        public string EngineTest()
+        {
+            PrologEngine.BaseTerm biere = e.NewIsoOrCsStringTerm("biere");
+            PrologEngine.BaseTerm jean = e.NewIsoOrCsStringTerm("jean");
+            PrologEngine.BaseTerm[] args = new PrologEngine.BaseTerm[] { biere, jean };
+
+            e.CreateFact("likes", args);
+
+            List<string> testFact = ask("likes", new string[] { "biere", "jean" });
+
+            return testFact[0];
+        }
     }
 }

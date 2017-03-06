@@ -54,21 +54,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\C#Prolog SF4.1\CSProlog\CSProlog.csproj">
+    <ProjectReference Include="..\CSProlog\CSProlog.csproj">
       <Project>{721e06ef-2be2-44bf-a0b7-bbe163a29f26}</Project>
       <Name>CSProlog</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\C#Prolog SF4.1\PLd\PLd.csproj">
-      <Project>{b7438fbf-6e46-4065-a60b-1b1ca2ac9875}</Project>
-      <Name>PLd</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\C#Prolog SF4.1\PLw\PLw.csproj">
-      <Project>{bb06adf9-92c3-4f92-8397-5acc92208528}</Project>
-      <Name>PLw</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\C#Prolog SF4.1\PLx\PLx.csproj">
-      <Project>{e84a59d2-e868-4108-be9a-55cbb7e85e36}</Project>
-      <Name>PLx</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

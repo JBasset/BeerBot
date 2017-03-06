@@ -16,8 +16,8 @@ namespace TestProject
             OpenBeerDB db = new OpenBeerDB();
             Console.WriteLine(db.DBTest());
             */
-            OpenBeerDB db = new OpenBeerDB();
-            Console.WriteLine(db.nbCat);
+            BeerPrologEngine e = new BeerPrologEngine();
+            Console.WriteLine(e.EngineTest());
         }
     }
 }
