@@ -34,7 +34,10 @@ namespace Domain
             string query = "";
             query += functor + "(";
             foreach(string arg in args)
-                query += arg + ",";
+            {
+                PrologEngine.BaseTerm argBaseTerm = e.NewIsoOrCsStringTerm(arg);
+                query += argBaseTerm.ToString() + ",";
+            }
             query = query.Substring(0, query.Length-1); // suppressing the last comma
             query += ").";
 
@@ -53,6 +56,8 @@ namespace Domain
             PrologEngine.BaseTerm biere = e.NewIsoOrCsStringTerm("biere");
             PrologEngine.BaseTerm jean = e.NewIsoOrCsStringTerm("jean");
             PrologEngine.BaseTerm[] args = new PrologEngine.BaseTerm[] { biere, jean };
+
+            Console.WriteLine(biere.ToWriteString(0));
 
             e.CreateFact("likes", args);
 
