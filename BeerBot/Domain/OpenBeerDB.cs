@@ -18,61 +18,88 @@ namespace Domain
         public int nbSty { get; private set; } // number of styles of beer in the database
         public int nbBeers { get; private set; } // number of beers in the database
 
+        public List<Beer> beers { get; private set; } // all the beers in the database
+
         public OpenBeerDB()
         {
             connection = new MySqlConnection(mySqlConnectionString);
-            nbCat = getNbCat();
-            nbSty = getNbSty();
-            nbBeers = getNbBeers();
+            //nbCat = getNbCat();
+            //nbSty = getNbSty();
+            //nbBeers = getNbBeers();
+            beers = getBeers();
+            writeDBToProlog();
         }
 
-        #region getNb
+        #region gets from database
+        /*
         private int getNbCat()
         {
-            connection.Open();
-            MySqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT COUNT(*) FROM categories";
-
-            MySqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-
-            int result = reader.GetInt32(0);
-
-            connection.Close();
-
-            return result;
+            return int.Parse(AskDataBase("SELECT COUNT(*) FROM categories")[0]);
         }
         private int getNbSty()
         {
-            connection.Open();
-            MySqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT COUNT(*) FROM styles";
-
-            MySqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-
-            int result = reader.GetInt32(0);
-
-            connection.Close();
-
-            return result;
+            return int.Parse(AskDataBase("SELECT COUNT(*) FROM styles")[0]);
         }
         private int getNbBeers()
         {
-            connection.Open();
-            MySqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT COUNT(*) FROM beers";
-
-            MySqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-
-            int result = reader.GetInt32(0);
-
-            connection.Close();
-
-            return result;
+            return int.Parse(AskDataBase("SELECT COUNT(*) FROM beers")[0]);
+        }
+        */
+        private List<Beer> getBeers()
+        {
+            List<Beer> beers = new List<Beer> { };
+            List<string[]> beerNamesAndId = AskDataBase("SELECT name, id FROM beers", new string[] { "name", "id" } );
+            foreach(string[] row in beerNamesAndId)
+            {
+                beers.Add(new Beer(row[0],int.Parse(row[1])));
+            }
+            return beers;
         }
         #endregion
+
+        private void writeDBToProlog()
+        {
+            List<string> lines = new List<string> { };
+
+            //getting all beers
+            foreach (Beer beer in beers)
+            {
+                lines.Add("beer(" + beer.prologName + ").");
+            }
+
+            using (StreamWriter outputFile = new StreamWriter("..\\..\\..\\PrologEngine\\facts.pl"))
+            {
+                foreach (string line in lines)
+                {
+                    outputFile.WriteLine(line);
+                }
+            }
+        }
+
+        public List<string[]> AskDataBase(string query, string[] expectedRows)
+        {
+            connection.Open();
+
+            List<string[]> results = new List<string[]> { };
+
+            MySqlCommand cmd = connection.CreateCommand();
+            cmd.CommandText = query;
+
+            MySqlDataReader reader = cmd.ExecuteReader();
+
+            while (reader.Read())
+            {
+                string[] thisRow = new string[expectedRows.Length];
+                for (int i = 0; i < expectedRows.Length; i++)
+                {
+                    thisRow[i] = reader.GetString(expectedRows[i]);
+                }
+                results.Add(thisRow);
+            }
+
+            connection.Close();
+            return results;
+        }
 
         /*
         // Basic database manipulation :

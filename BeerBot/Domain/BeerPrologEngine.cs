@@ -10,60 +10,42 @@ namespace Domain
     public class BeerPrologEngine
         // Manipulations of the prolog engine will use this class
     {
-        public PrologEngine e { get; private set; }
+        public PrologEngine engine { get; private set; }
 
         public BeerPrologEngine()
         {
-            e = new PrologEngine();
+            engine = new PrologEngine();
             createFactsFromDatabase();
         }
 
         private void createFactsFromDatabase()
         {
+            // Creating the database class also writes all facts from the database in a prolog file
             OpenBeerDB db = new OpenBeerDB();
-
-            for (int i = 0; i < db.nbCat; i++)
-            {
-
-            }
+            engine.Consult("..\\..\\..\\PrologEngine\\facts.pl");
         }
 
-        public List<string> ask(string functor, string[] args)
+        public List<string> AskPrologEngine(string functor, string[] args)
         {
             // Creating the query's string
             string query = "";
             query += functor + "(";
             foreach(string arg in args)
             {
-                PrologEngine.BaseTerm argBaseTerm = e.NewIsoOrCsStringTerm(arg);
+                PrologEngine.BaseTerm argBaseTerm = engine.NewIsoOrCsStringTerm(arg);
                 query += argBaseTerm.ToString() + ",";
             }
             query = query.Substring(0, query.Length-1); // suppressing the last comma
             query += ").";
 
             // asking the query to the engine
-            e.Query = query;
+            engine.Query = query;
             List<string> result = new List<string> { };
-            foreach(PrologEngine.ISolution s in e.SolutionIterator)
+            foreach(PrologEngine.ISolution s in engine.SolutionIterator)
             {
                 result.Add(s.ToString());
             }
             return result;
-        }
-
-        public string EngineTest()
-        {
-            PrologEngine.BaseTerm biere = e.NewIsoOrCsStringTerm("biere");
-            PrologEngine.BaseTerm jean = e.NewIsoOrCsStringTerm("jean");
-            PrologEngine.BaseTerm[] args = new PrologEngine.BaseTerm[] { biere, jean };
-
-            Console.WriteLine(biere.ToWriteString(0));
-
-            e.CreateFact("likes", args);
-
-            List<string> testFact = ask("likes", new string[] { "biere", "jean" });
-
-            return testFact[0];
         }
     }
 }

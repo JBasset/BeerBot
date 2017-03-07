@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Beer.cs" />
     <Compile Include="OpenBeerDB.cs" />
     <Compile Include="BeerPrologEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
