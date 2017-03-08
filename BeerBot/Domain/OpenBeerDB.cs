@@ -18,16 +18,13 @@ namespace Domain
         public int nbSty { get; private set; } // number of styles of beer in the database
         public int nbBeers { get; private set; } // number of beers in the database
 
-        public List<Beer> beers { get; private set; } // all the beers in the database
-
         public OpenBeerDB()
         {
             connection = new MySqlConnection(mySqlConnectionString);
             //nbCat = getNbCat();
             //nbSty = getNbSty();
             //nbBeers = getNbBeers();
-            beers = getBeers();
-            writeDBToProlog();
+            generateFactFile();
         }
 
         #region gets from database
@@ -45,27 +42,38 @@ namespace Domain
             return int.Parse(AskDataBase("SELECT COUNT(*) FROM beers")[0]);
         }
         */
-        private List<Beer> getBeers()
-        {
-            List<Beer> beers = new List<Beer> { };
-            List<string[]> beerNamesAndId = AskDataBase("SELECT name, id FROM beers", new string[] { "name", "id" } );
-            foreach(string[] row in beerNamesAndId)
-            {
-                beers.Add(new Beer(row[0],int.Parse(row[1])));
-            }
-            return beers;
-        }
         #endregion
 
-        private void writeDBToProlog()
+        private void generateFactFile()
         {
             List<string> lines = new List<string> { };
 
-            //getting all beers
-            foreach (Beer beer in beers)
+            #region getting all beers
+            List<string[]> beers = AskDataBase("SELECT id FROM beers", new string[] { "id" });
+            foreach (string[] beer in beers)
             {
-                lines.Add("beer(" + beer.prologName + ").");
+                string prologName = "beer" + beer[0];
+                lines.Add("beer(" + prologName + ").");
             }
+            #endregion
+
+            #region getting all categories
+            List<string[]> categories = AskDataBase("SELECT cat_name FROM categories", new string[] { "cat_name" });
+            foreach(string[] category in categories)
+            {
+                string prologName = category[0].Replace(' ', '_').ToLower(); ;
+                lines.Add("category(" + prologName + ").");
+            }
+            #endregion
+
+            #region getting all styles
+            List<string[]> styles = AskDataBase("SELECT id FROM styles", new string[] { "id" });
+            foreach (string[] style in styles)
+            {
+                string prologName = "style" + style[0];
+                lines.Add("style(" + prologName + ").");
+            }
+            #endregion
 
             using (StreamWriter outputFile = new StreamWriter("..\\..\\..\\PrologEngine\\facts.pl"))
             {
