@@ -1,0 +1,1 @@
+:- consult("facts.pl").
