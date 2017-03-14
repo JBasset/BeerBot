@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  127.0.0.1
--- Généré le :  Mar 14 Mars 2017 à 14:28
+-- Généré le :  Mar 14 Mars 2017 à 14:51
 -- Version du serveur :  10.1.10-MariaDB
 -- Version de PHP :  5.6.19
 
@@ -6203,10 +6203,22 @@ INSERT INTO `styles` (`id`, `cat_id`, `style_name`, `last_mod`) VALUES
 CREATE TABLE `users` (
   `id` int(11) UNSIGNED NOT NULL,
   `name` varchar(40) NOT NULL,
-  `age` int(3) NOT NULL,
+  `birth_year` int(4) NOT NULL,
   `gender` tinyint(1) NOT NULL COMMENT '0 for man, 1 for woman',
   `social_cat_id` int(11) UNSIGNED NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Contenu de la table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `birth_year`, `gender`, `social_cat_id`) VALUES
+(1, 'Jean', 1995, 0, 1),
+(2, 'Aubin', 1995, 0, 1),
+(3, 'Aline', 1995, 1, 1),
+(4, 'Marianne', 1996, 1, 1),
+(5, 'Charles', 1992, 0, 1),
+(6, 'Nicolas', 1993, 0, 1);
 
 --
 -- Index pour les tables exportées
@@ -6277,7 +6289,7 @@ ALTER TABLE `styles`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- Contraintes pour les tables exportées
 --
