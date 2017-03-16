@@ -35708,6 +35708,7 @@ user(user3).
 user(user4).
 user(user5).
 user(user6).
+user(user7).
 birthDate(user1,1995).
 birthDate(user2,1995).
 birthDate(user3,1995).
@@ -35734,3 +35735,8 @@ rates(user1,beer4375,4).
 rates(user1,beer5119,4.5).
 rates(user1,beer5221,4).
 rates(user1,beer5232,4.5).
+rates(user2,beer2222,4.5).
+rates(user3,beer2222,3).
+rates(user4,beer2222,4).
+rates(user5,beer2222,4.5).
+rates(user6,beer2222,3.5).
