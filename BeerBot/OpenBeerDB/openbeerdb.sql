@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  127.0.0.1
--- Généré le :  Mar 14 Mars 2017 à 14:51
+-- Généré le :  Ven 17 Mars 2017 à 14:48
 -- Version du serveur :  10.1.10-MariaDB
 -- Version de PHP :  5.6.19
 
@@ -6015,6 +6015,25 @@ CREATE TABLE `ratings` (
   `rating` float NOT NULL COMMENT 'rating on 5'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+--
+-- Contenu de la table `ratings`
+--
+
+INSERT INTO `ratings` (`user_id`, `beer_id`, `rating`) VALUES
+(1, 2222, 4),
+(1, 4253, 3),
+(1, 4339, 1.5),
+(1, 4365, 3.5),
+(1, 4375, 4),
+(1, 5119, 4.5),
+(1, 5221, 4),
+(1, 5232, 4.5),
+(2, 2222, 4.5),
+(3, 2222, 3),
+(4, 2222, 4),
+(5, 2222, 4.5),
+(6, 2222, 3.5);
+
 -- --------------------------------------------------------
 
 --
@@ -6218,7 +6237,8 @@ INSERT INTO `users` (`id`, `name`, `birth_year`, `gender`, `social_cat_id`) VALU
 (3, 'Aline', 1995, 1, 1),
 (4, 'Marianne', 1996, 1, 1),
 (5, 'Charles', 1992, 0, 1),
-(6, 'Nicolas', 1993, 0, 1);
+(6, 'Nicolas', 1993, 0, 1),
+(7, 'Default User', 1995, 0, 1);
 
 --
 -- Index pour les tables exportées
@@ -6289,7 +6309,7 @@ ALTER TABLE `styles`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
 -- Contraintes pour les tables exportées
 --

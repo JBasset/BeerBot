@@ -21,7 +21,7 @@ namespace Domain
         public OpenBeerDB()
         {
             connection = new MySqlConnection(mySqlConnectionString);
-            generateFactFile();
+            generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
         }
 
         private void generateFactFile()
@@ -39,17 +39,17 @@ namespace Domain
             */
 
             #region getting all beers
-            List<string[]> beers = AskDataBase("SELECT id FROM beers", new string[] { "id" });
+            List<string[]> beers = Select(new string[] { "id" }, "beers");
             foreach (string[] beer in beers)
             {
                 string prologName = "beer" + beer[0];
                 lines.Add("beer(" + prologName + ").");
             }
             #endregion
-
+            
             #region getting all categories
-            List<string[]> categories = AskDataBase("SELECT id FROM categories", new string[] { "id" });
-            foreach(string[] category in categories)
+            List<string[]> categories = Select(new string[] { "id" }, "categories");
+            foreach (string[] category in categories)
             {
                 if (int.Parse(category[0]) != -1)
                 {
@@ -62,7 +62,7 @@ namespace Domain
             #endregion
 
             #region getting all styles
-            List<string[]> styles = AskDataBase("SELECT id FROM styles", new string[] { "id" });
+            List<string[]> styles = Select(new string[] { "id" }, "styles"); ;
             foreach (string[] style in styles)
             {
                 if (int.Parse(style[0]) != -1)
@@ -76,7 +76,7 @@ namespace Domain
             #endregion
 
             #region getting all abv (alcohol by volume)
-            List<string[]> abvs = AskDataBase("SELECT id,abv FROM beers", new string[] { "id", "abv" });
+            List<string[]> abvs = Select(new string[] { "id", "abv" }, "beers");
             foreach (string[] abv in abvs)
             {
                 lines.Add("abv(beer"+ abv[0] + ","+abv[1].Replace(',','.')+")."); // decimals should be separated with a dot, not a comma
@@ -84,7 +84,7 @@ namespace Domain
             #endregion
 
             #region getting all ibu (internationnal bitterness unit)
-            List<string[]> ibus = AskDataBase("SELECT id,ibu FROM beers", new string[] { "id", "ibu" });
+            List<string[]> ibus = Select(new string[] { "id", "ibu" }, "beers");
             foreach (string[] ibu in ibus)
             {
                 lines.Add("ibu(beer" + ibu[0] + "," + ibu[1].Replace(',', '.') + ")."); // decimals should be separated with a dot, not a comma
@@ -92,7 +92,7 @@ namespace Domain
             #endregion
 
             #region getting all srm (standard reference method)
-            List<string[]> srms = AskDataBase("SELECT id,srm FROM beers", new string[] { "id", "srm" });
+            List<string[]> srms = Select(new string[] { "id", "srm" }, "beers");
             foreach (string[] srm in srms)
             {
                 lines.Add("srm(beer" + srm[0] + "," + srm[1].Replace(',', '.') + ")."); // decimals should be separated with a dot, not a comma
@@ -100,7 +100,7 @@ namespace Domain
             #endregion
 
             #region getting all beers categories
-            List<string[]> beersCat = AskDataBase("SELECT id, cat_id FROM beers", new string[] { "id", "cat_id" });
+            List<string[]> beersCat = Select(new string[] { "id", "cat_id" }, "beers");
             foreach (string[] beerCat in beersCat)
             {
                 string beerPrologName = "beer" + beerCat[0];
@@ -114,7 +114,7 @@ namespace Domain
             #endregion
 
             #region getting all beers styles
-            List<string[]> beersSty = AskDataBase("SELECT id, style_id FROM beers", new string[] { "id", "style_id" });
+            List<string[]> beersSty = Select(new string[] { "id", "style_id" }, "beers");
             foreach (string[] beerSty in beersSty)
             {
                 string beerPrologName = "beer" + beerSty[0];
@@ -128,7 +128,7 @@ namespace Domain
             #endregion
 
             #region getting all styles categories
-            List<string[]> stylesCat = AskDataBase("SELECT id, cat_id FROM styles", new string[] { "id", "cat_id" });
+            List<string[]> stylesCat = Select(new string[] { "id", "cat_id" }, "styles");
             foreach (string[] styleCat in stylesCat)
             {
                 string stylePrologName;
@@ -148,7 +148,7 @@ namespace Domain
             #endregion
 
             #region getting all social categories
-            List<string[]> socCats = AskDataBase("SELECT id FROM social_categories", new string[] { "id" });
+            List<string[]> socCats = Select(new string[] { "id" }, "social_categories");
             foreach (string[] socCat in socCats)
             {
                 string prologName = "socialCategory" + socCat[0];
@@ -157,7 +157,7 @@ namespace Domain
             #endregion
 
             #region getting all users
-            List<string[]> users = AskDataBase("SELECT id FROM users", new string[] { "id" });
+            List<string[]> users = Select(new string[] { "id" }, "users");
             foreach (string[] user in users)
             {
                 string prologName = "user" + user[0];
@@ -166,7 +166,7 @@ namespace Domain
             #endregion
 
             #region getting all users birth years
-            List<string[]> bys = AskDataBase("SELECT id, birth_year FROM users", new string[] { "id", "birth_year" });
+            List<string[]> bys = Select(new string[] { "id", "birth_year" }, "users");
             foreach (string[] by in bys)
             {
                 string prologName = "user" + by[0];
@@ -175,7 +175,7 @@ namespace Domain
             #endregion
 
             #region getting all users genders
-            List<string[]> genders = AskDataBase("SELECT id, gender FROM users", new string[] { "id", "gender" });
+            List<string[]> genders = Select(new string[] { "id", "gender" }, "users");
             foreach (string[] gender in genders)
             {
                 string prologName = "user" + gender[0];
@@ -185,7 +185,7 @@ namespace Domain
             #endregion
 
             #region getting all users social categories
-            List<string[]> userSocCats = AskDataBase("SELECT id, social_cat_id FROM users", new string[] { "id", "social_cat_id" });
+            List<string[]> userSocCats = Select(new string[] { "id", "social_cat_id" }, "users");
             foreach (string[] userSocCat in userSocCats)
             {
                 string prologName = "user" + userSocCat[0];
@@ -195,7 +195,7 @@ namespace Domain
             #endregion
 
             #region getting all users ratings
-            List<string[]> ratings = AskDataBase("SELECT user_id, beer_id, rating FROM ratings", new string[] { "user_id", "beer_id", "rating" });
+            List<string[]> ratings = Select(new string[] { "user_id", "beer_id", "rating" }, "ratings");
             foreach (string[] rating in ratings)
             {
                 string userPlName = "user" + rating[0];
@@ -203,7 +203,7 @@ namespace Domain
                 lines.Add("rates(" + userPlName + "," + beerPlName + "," + rating[2].Replace(',','.') + ").");
             }
             #endregion
-
+            
             #endregion
 
             using (StreamWriter outputFile = new StreamWriter("..\\..\\..\\PrologEngine\\facts.pl"))
@@ -215,9 +215,16 @@ namespace Domain
             }
         }
 
-        public List<string[]> AskDataBase(string query, string[] expectedRows)
+        public List<string[]> Select(string[] rows, string table)
         {
             connection.Open();
+
+            string query = "SELECT ";
+            foreach (string row in rows)
+                query += row + ", ";
+            query = query.Substring(0, query.Length-2); // suppressing the last ", "
+            query += " FROM ";
+            query += table;
 
             List<string[]> results = new List<string[]> { };
 
@@ -228,10 +235,10 @@ namespace Domain
 
             while (reader.Read())
             {
-                string[] thisRow = new string[expectedRows.Length];
-                for (int i = 0; i < expectedRows.Length; i++)
+                string[] thisRow = new string[rows.Length];
+                for (int i = 0; i < rows.Length; i++)
                 {
-                    thisRow[i] = reader.GetString(expectedRows[i]);
+                    thisRow[i] = reader.GetString(rows[i]);
                 }
                 results.Add(thisRow);
             }
@@ -240,24 +247,25 @@ namespace Domain
             return results;
         }
 
-        /*
-        // Basic database manipulation :
-        public string DBTest()
+        public void Insert(string table, string[] rows, string[] values)
         {
-            this.connection.Open();
+            connection.Open();
+
+            string query = "INSERT INTO " + table + " (";
+            foreach (string row in rows)
+                query += row + ", ";
+            query = query.Substring(0, query.Length - 2); // suppressing the last ", "
+            query += ") VALUES (";
+            foreach (string value in values)
+                query += "\"" + value + "\"" + ", ";
+            query = query.Substring(0, query.Length - 2); // suppressing the last ", "
+            query += ")";
+
             MySqlCommand cmd = connection.CreateCommand();
-            cmd.CommandText = "SELECT name,descript FROM beers WHERE id = 1";
-
-            MySqlDataReader reader = cmd.ExecuteReader();
-            reader.Read();
-
-            string result = reader.GetString(0);
-            result += "\n" + reader.GetString(1);
+            cmd.CommandText = query;
+            cmd.ExecuteNonQuery();
 
             connection.Close();
-
-            return result;
         }
-        */
     }
 }
