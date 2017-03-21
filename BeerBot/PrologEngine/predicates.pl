@@ -24,8 +24,7 @@ sortByRating(L1,[H2|T2]) :-
 
 /* getting the elements of the list */
 inList(E,[E|_]).
-inList(E,[_|T]) :-
-	inList(E,T).
+inList(E,[_|T]) :- inList(E,T).
 
 
 /* Sum of the elements of the list L */
@@ -76,18 +75,20 @@ significativelyKnownBeer(B) :-
 	beer(B),
 	findall(R, rates(_,B,R), Z),
 	length(Z,L),
-	L > 0. % We consider the beer to be known enough for at least 5 ratings.
+	L > 4. % We consider the beer to be known enough for at least 5 ratings.
 	
-/* Predicates used to advice the user */
+/* Predicates used to advice the user ; it will probably change a lot*/
 advice(U,B) :-
 	adviceOnKind(U,B),
 	adviceOnRating(U,B,_).
 
 /* advice given on the users liked categories or styles */
 adviceOnKind(U,B) :-
-	likesSignificatively(U,K),
-	beerCategory(B,K),
-	not(rates(U,B,_)). % it's useless to advice a beer the user already knows
+	findall(B1,
+	(likesSignificatively(U,K),beerCategory(B1,K),not(rates(U,B1,_))),
+	L),
+	sortByRating(L,SL),
+	inList(B,SL).
 
 /* gives a list of all known enough beers in order of average ratings ; the higher the average rating the higher the beer in the list */
 adviceOnRating(U,B,R) :-

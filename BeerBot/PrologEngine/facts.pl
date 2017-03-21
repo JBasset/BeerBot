@@ -35742,8 +35742,13 @@ rates(user1,beer4375,4).
 rates(user1,beer5119,4.5).
 rates(user1,beer5221,4).
 rates(user1,beer5232,4.5).
+rates(user2,beer338,4.5).
 rates(user2,beer2222,4.5).
+rates(user3,beer338,4).
 rates(user3,beer2222,3).
+rates(user4,beer338,3.5).
 rates(user4,beer2222,4).
+rates(user5,beer338,4).
 rates(user5,beer2222,4.5).
+rates(user6,beer338,4).
 rates(user6,beer2222,3.5).
