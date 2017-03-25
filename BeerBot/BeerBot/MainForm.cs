@@ -13,7 +13,8 @@ namespace BeerBot
 {
     public partial class MainForm : Form
     {
-        public static OpenBeerDB database = new OpenBeerDB();
+        public OpenBeerDB database;
+        public User connectedUser;
 
         public static int userId;
         public static string userName;
@@ -21,6 +22,12 @@ namespace BeerBot
         public MainForm()
         {
             InitializeComponent();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            ConnectionForm connectionFrom = new ConnectionForm();
+            connectionFrom.Show();
         }
     }
 }

@@ -97,3 +97,4 @@ adviceOnRating(U,B,R) :-
 	inList(B,SL),
 	beerAverageRating(B,R).
 	
+/*  */

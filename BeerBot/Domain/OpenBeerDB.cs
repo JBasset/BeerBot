@@ -14,14 +14,30 @@ namespace Domain
         private string mySqlConnectionString = "SERVER=127.0.0.1; DATABASE=openbeerdb; UID=root; PASSWORD=";
         private MySqlConnection connection;
 
-        public int nbCat { get; private set; } // number of categories of beer in the database
-        public int nbSty { get; private set; } // number of styles of beer in the database
-        public int nbBeers { get; private set; } // number of beers in the database
+        public List<User> users { get; private set; }
 
         public OpenBeerDB()
         {
             connection = new MySqlConnection(mySqlConnectionString);
             generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
+            users = getUsers();
+        }
+
+        public List<User> getUsers()
+        {
+            List<string[]> usersAttributes = Select(new string[] { "id", "name", "password", "birth_year", "gender", "social_cat_id" }, "users");
+            List<User> users = new List<User> { };
+            foreach(string[] userAttributes in usersAttributes)
+            {
+                users.Add(new User(
+                    int.Parse(userAttributes[0]),
+                    userAttributes[1],
+                    userAttributes[2],
+                    int.Parse(userAttributes[3]),
+                    bool.Parse(userAttributes[4]),
+                    userAttributes[5]));
+            }
+            return users;
         }
 
         private void generateFactFile()
@@ -215,6 +231,7 @@ namespace Domain
             }
         }
 
+        #region getting information from the database
         public List<string[]> Select(string[] rows, string table)
         {
             connection.Open();
@@ -267,5 +284,6 @@ namespace Domain
 
             connection.Close();
         }
+        #endregion
     }
 }

@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.connectionPanel = new System.Windows.Forms.Panel();
+            this.errorLabel = new System.Windows.Forms.Label();
+            this.connexionButton = new System.Windows.Forms.Button();
             this.passwordTextBox = new System.Windows.Forms.TextBox();
             this.passwordLabel = new System.Windows.Forms.Label();
             this.usernameTextBox = new System.Windows.Forms.TextBox();
@@ -36,8 +38,6 @@
             this.inscriptionButton = new System.Windows.Forms.Button();
             this.titleLabel = new System.Windows.Forms.Label();
             this.logoPanel = new System.Windows.Forms.Panel();
-            this.connexionButton = new System.Windows.Forms.Button();
-            this.errorLabel = new System.Windows.Forms.Label();
             this.connectionPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -60,10 +60,35 @@
             this.connectionPanel.Size = new System.Drawing.Size(301, 268);
             this.connectionPanel.TabIndex = 0;
             // 
+            // errorLabel
+            // 
+            this.errorLabel.AutoSize = true;
+            this.errorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.errorLabel.Location = new System.Drawing.Point(6, 176);
+            this.errorLabel.Name = "errorLabel";
+            this.errorLabel.Size = new System.Drawing.Size(250, 32);
+            this.errorLabel.TabIndex = 7;
+            this.errorLabel.Text = "Le nom d\'utilisateur et le mot de passe ne\r\ncorrespondent pas";
+            this.errorLabel.Visible = false;
+            // 
+            // connexionButton
+            // 
+            this.connexionButton.BackColor = System.Drawing.Color.SteelBlue;
+            this.connexionButton.FlatAppearance.BorderColor = System.Drawing.Color.White;
+            this.connexionButton.ForeColor = System.Drawing.Color.White;
+            this.connexionButton.Location = new System.Drawing.Point(190, 207);
+            this.connexionButton.Name = "connexionButton";
+            this.connexionButton.Size = new System.Drawing.Size(104, 35);
+            this.connexionButton.TabIndex = 6;
+            this.connexionButton.Text = "Me connecter";
+            this.connexionButton.UseVisualStyleBackColor = false;
+            this.connexionButton.Click += new System.EventHandler(this.connexionButton_Click);
+            // 
             // passwordTextBox
             // 
             this.passwordTextBox.Location = new System.Drawing.Point(42, 151);
             this.passwordTextBox.Name = "passwordTextBox";
+            this.passwordTextBox.PasswordChar = '*';
             this.passwordTextBox.Size = new System.Drawing.Size(183, 22);
             this.passwordTextBox.TabIndex = 5;
             // 
@@ -123,30 +148,6 @@
             this.logoPanel.Size = new System.Drawing.Size(183, 268);
             this.logoPanel.TabIndex = 1;
             // 
-            // connexionButton
-            // 
-            this.connexionButton.BackColor = System.Drawing.Color.SteelBlue;
-            this.connexionButton.FlatAppearance.BorderColor = System.Drawing.Color.White;
-            this.connexionButton.ForeColor = System.Drawing.Color.White;
-            this.connexionButton.Location = new System.Drawing.Point(190, 207);
-            this.connexionButton.Name = "connexionButton";
-            this.connexionButton.Size = new System.Drawing.Size(104, 35);
-            this.connexionButton.TabIndex = 6;
-            this.connexionButton.Text = "Me connecter";
-            this.connexionButton.UseVisualStyleBackColor = false;
-            this.connexionButton.Click += new System.EventHandler(this.connexionButton_Click);
-            // 
-            // errorLabel
-            // 
-            this.errorLabel.AutoSize = true;
-            this.errorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.errorLabel.Location = new System.Drawing.Point(6, 176);
-            this.errorLabel.Name = "errorLabel";
-            this.errorLabel.Size = new System.Drawing.Size(250, 32);
-            this.errorLabel.TabIndex = 7;
-            this.errorLabel.Text = "Le nom d\'utilisateur et le mot de passe ne\r\ncorrespondent pas";
-            this.errorLabel.Visible = false;
-            // 
             // ConnectionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -157,6 +158,7 @@
             this.Controls.Add(this.connectionPanel);
             this.Name = "ConnectionForm";
             this.Text = "Connection";
+            this.Load += new System.EventHandler(this.ConnectionForm_Load);
             this.connectionPanel.ResumeLayout(false);
             this.connectionPanel.PerformLayout();
             this.ResumeLayout(false);

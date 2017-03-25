@@ -10,7 +10,7 @@ namespace Domain
     {
         public string name { get; private set; }
         public string description { get; private set; }
-        public int id { get; private set; } // Id of the beer in the database
+        public int id { get; private set; } // Id of the beer in the database, needed later to create the prolog name of the beer
         public int catId { get; private set; } // Id of the beer's category
         public int styId { get; private set; } // Id of the beer's style
         public string prologName { get; private set; } // Name of the beer in the prolog engine

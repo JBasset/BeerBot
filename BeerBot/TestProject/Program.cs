@@ -12,6 +12,17 @@ namespace TestProject
         static void Main(string[] args)
         {
             OpenBeerDB db = new OpenBeerDB();
+
+            foreach(User user in db.users)
+            {
+                Console.Write(user.id
+                    + " " + user.name
+                    + " " + user.password
+                    + " " + user.birthYear
+                    + " " + user.gender
+                    + " " + user.socialCategory);
+                Console.WriteLine();
+            }
         }
     }
 }
