@@ -22,5 +22,12 @@ namespace Domain
             this.birthYear = birthYear;
             this.gender = gender;
         }
+        public User(string name, string password, int birthYear, bool gender)
+        {
+            this.name = name;
+            this.password = password;
+            this.birthYear = birthYear;
+            this.gender = gender;
+        }
     }
 }

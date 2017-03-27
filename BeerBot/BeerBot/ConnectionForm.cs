@@ -13,8 +13,8 @@ namespace BeerBot
 {
     public partial class ConnectionForm : Form
     {
-        private OpenBeerDB db = new OpenBeerDB();
-        private User loggedUser;
+        public OpenBeerDB db = new OpenBeerDB();
+        public User loggedUser;
 
         public ConnectionForm()
         {
@@ -31,31 +31,44 @@ namespace BeerBot
                     if (passwordTextBox.Text == user.password)
                         loggedUser = user;
                     else
-                    {
-                        errorLabel.Text = "Le mot de passe ne correspond pas";
-                        errorLabel.Visible = true;
                         passwordError = true;
-                    }
                     break;
                 }
             }
-            if (loggedUser == null && !passwordError) // if the logged user isn't defined, and it's not because the password is wrong
+            if (passwordError)
+            {
+                errorLabel.Text = "Le mot de passe ne correspond pas";
+                errorLabel.Visible = true;
+            }
+            else if (loggedUser == null)
             {
                 errorLabel.Text = "Cet utilisateur n'existe pas";
                 errorLabel.Visible = true;
             }
             else
             {
-                MainForm.database = db;
-                MainForm.loggedUser = loggedUser;
-                this.Close();
+                (Owner as MainForm).database = db;
+                (Owner as MainForm).loggedUser = loggedUser;
+                Close();
             }
         }
 
         private void inscriptionButton_Click(object sender, EventArgs e)
         {
             InscriptionForm inscrForm = new InscriptionForm();
+            AddOwnedForm(inscrForm);
+            inscrForm.Disposed += InscriptionForm_Disposed;
             inscrForm.Show();
+        }
+
+        private void InscriptionForm_Disposed(object sender, EventArgs e)
+        {
+            if (loggedUser != null)
+            {
+                (Owner as MainForm).database = db;
+                (Owner as MainForm).loggedUser = loggedUser;
+                Close();
+            }
         }
     }
 }

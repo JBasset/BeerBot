@@ -30,6 +30,11 @@
         {
             this.logoPanel = new System.Windows.Forms.Panel();
             this.connectionPanel = new System.Windows.Forms.Panel();
+            this.birthYearComboBox = new System.Windows.Forms.ComboBox();
+            this.birthYearLabel = new System.Windows.Forms.Label();
+            this.genderComboBox = new System.Windows.Forms.ComboBox();
+            this.genderLabel = new System.Windows.Forms.Label();
+            this.passwordsChecksLabel = new System.Windows.Forms.Label();
             this.repeatPasswordTextBox = new System.Windows.Forms.TextBox();
             this.repeatPasswordLabel = new System.Windows.Forms.Label();
             this.errorLabel = new System.Windows.Forms.Label();
@@ -39,11 +44,6 @@
             this.usernameTextBox = new System.Windows.Forms.TextBox();
             this.usernameLabel = new System.Windows.Forms.Label();
             this.titleLabel = new System.Windows.Forms.Label();
-            this.passwordErrorLabel = new System.Windows.Forms.Label();
-            this.genderLabel = new System.Windows.Forms.Label();
-            this.genderComboBox = new System.Windows.Forms.ComboBox();
-            this.birthYearLabel = new System.Windows.Forms.Label();
-            this.birthYeaComboBox = new System.Windows.Forms.ComboBox();
             this.connectionPanel.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -59,11 +59,11 @@
             // 
             this.connectionPanel.BackColor = System.Drawing.Color.SlateGray;
             this.connectionPanel.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.connectionPanel.Controls.Add(this.birthYeaComboBox);
+            this.connectionPanel.Controls.Add(this.birthYearComboBox);
             this.connectionPanel.Controls.Add(this.birthYearLabel);
             this.connectionPanel.Controls.Add(this.genderComboBox);
             this.connectionPanel.Controls.Add(this.genderLabel);
-            this.connectionPanel.Controls.Add(this.passwordErrorLabel);
+            this.connectionPanel.Controls.Add(this.passwordsChecksLabel);
             this.connectionPanel.Controls.Add(this.repeatPasswordTextBox);
             this.connectionPanel.Controls.Add(this.repeatPasswordLabel);
             this.connectionPanel.Controls.Add(this.errorLabel);
@@ -80,6 +80,54 @@
             this.connectionPanel.Size = new System.Drawing.Size(301, 268);
             this.connectionPanel.TabIndex = 2;
             // 
+            // birthYearComboBox
+            // 
+            this.birthYearComboBox.FormattingEnabled = true;
+            this.birthYearComboBox.Location = new System.Drawing.Point(105, 177);
+            this.birthYearComboBox.Name = "birthYearComboBox";
+            this.birthYearComboBox.Size = new System.Drawing.Size(79, 24);
+            this.birthYearComboBox.TabIndex = 14;
+            // 
+            // birthYearLabel
+            // 
+            this.birthYearLabel.AutoSize = true;
+            this.birthYearLabel.Location = new System.Drawing.Point(83, 157);
+            this.birthYearLabel.Name = "birthYearLabel";
+            this.birthYearLabel.Size = new System.Drawing.Size(65, 16);
+            this.birthYearLabel.TabIndex = 13;
+            this.birthYearLabel.Text = "Né(e) en :";
+            // 
+            // genderComboBox
+            // 
+            this.genderComboBox.FormattingEnabled = true;
+            this.genderComboBox.Items.AddRange(new object[] {
+            "H",
+            "F"});
+            this.genderComboBox.Location = new System.Drawing.Point(42, 177);
+            this.genderComboBox.Name = "genderComboBox";
+            this.genderComboBox.Size = new System.Drawing.Size(35, 24);
+            this.genderComboBox.TabIndex = 12;
+            // 
+            // genderLabel
+            // 
+            this.genderLabel.AutoSize = true;
+            this.genderLabel.Location = new System.Drawing.Point(9, 157);
+            this.genderLabel.Name = "genderLabel";
+            this.genderLabel.Size = new System.Drawing.Size(46, 16);
+            this.genderLabel.TabIndex = 11;
+            this.genderLabel.Text = "Sexe :";
+            // 
+            // passwordsChecksLabel
+            // 
+            this.passwordsChecksLabel.AutoSize = true;
+            this.passwordsChecksLabel.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.passwordsChecksLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
+            this.passwordsChecksLabel.Location = new System.Drawing.Point(190, 135);
+            this.passwordsChecksLabel.Name = "passwordsChecksLabel";
+            this.passwordsChecksLabel.Size = new System.Drawing.Size(20, 19);
+            this.passwordsChecksLabel.TabIndex = 10;
+            this.passwordsChecksLabel.Text = "X";
+            // 
             // repeatPasswordTextBox
             // 
             this.repeatPasswordTextBox.Location = new System.Drawing.Point(42, 132);
@@ -87,6 +135,7 @@
             this.repeatPasswordTextBox.PasswordChar = '*';
             this.repeatPasswordTextBox.Size = new System.Drawing.Size(142, 22);
             this.repeatPasswordTextBox.TabIndex = 9;
+            this.repeatPasswordTextBox.TextChanged += new System.EventHandler(this.repeatPasswordTextBox_TextChanged);
             // 
             // repeatPasswordLabel
             // 
@@ -101,7 +150,7 @@
             // 
             this.errorLabel.AutoSize = true;
             this.errorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.errorLabel.Location = new System.Drawing.Point(9, 225);
+            this.errorLabel.Location = new System.Drawing.Point(9, 216);
             this.errorLabel.Name = "errorLabel";
             this.errorLabel.Size = new System.Drawing.Size(34, 16);
             this.errorLabel.TabIndex = 7;
@@ -119,6 +168,7 @@
             this.inscriptionButton.TabIndex = 6;
             this.inscriptionButton.Text = "M\'inscrire";
             this.inscriptionButton.UseVisualStyleBackColor = false;
+            this.inscriptionButton.Click += new System.EventHandler(this.inscriptionButton_Click);
             // 
             // passwordTextBox
             // 
@@ -127,6 +177,7 @@
             this.passwordTextBox.PasswordChar = '*';
             this.passwordTextBox.Size = new System.Drawing.Size(142, 22);
             this.passwordTextBox.TabIndex = 5;
+            this.passwordTextBox.TextChanged += new System.EventHandler(this.passwordTextBox_TextChanged);
             // 
             // passwordLabel
             // 
@@ -164,54 +215,6 @@
             this.titleLabel.TabIndex = 0;
             this.titleLabel.Text = "Inscription";
             // 
-            // passwordErrorLabel
-            // 
-            this.passwordErrorLabel.AutoSize = true;
-            this.passwordErrorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.passwordErrorLabel.Location = new System.Drawing.Point(204, 88);
-            this.passwordErrorLabel.Name = "passwordErrorLabel";
-            this.passwordErrorLabel.Size = new System.Drawing.Size(90, 64);
-            this.passwordErrorLabel.TabIndex = 10;
-            this.passwordErrorLabel.Text = "Les mots de\r\npasse ne\r\ncorrespondent\r\npas";
-            this.passwordErrorLabel.Visible = false;
-            // 
-            // genderLabel
-            // 
-            this.genderLabel.AutoSize = true;
-            this.genderLabel.Location = new System.Drawing.Point(9, 157);
-            this.genderLabel.Name = "genderLabel";
-            this.genderLabel.Size = new System.Drawing.Size(46, 16);
-            this.genderLabel.TabIndex = 11;
-            this.genderLabel.Text = "Sexe :";
-            // 
-            // genderComboBox
-            // 
-            this.genderComboBox.FormattingEnabled = true;
-            this.genderComboBox.Items.AddRange(new object[] {
-            "H",
-            "F"});
-            this.genderComboBox.Location = new System.Drawing.Point(42, 177);
-            this.genderComboBox.Name = "genderComboBox";
-            this.genderComboBox.Size = new System.Drawing.Size(35, 24);
-            this.genderComboBox.TabIndex = 12;
-            // 
-            // birthYearLabel
-            // 
-            this.birthYearLabel.AutoSize = true;
-            this.birthYearLabel.Location = new System.Drawing.Point(83, 157);
-            this.birthYearLabel.Name = "birthYearLabel";
-            this.birthYearLabel.Size = new System.Drawing.Size(65, 16);
-            this.birthYearLabel.TabIndex = 13;
-            this.birthYearLabel.Text = "Né(e) en :";
-            // 
-            // birthYeaComboBox
-            // 
-            this.birthYeaComboBox.FormattingEnabled = true;
-            this.birthYeaComboBox.Location = new System.Drawing.Point(105, 177);
-            this.birthYeaComboBox.Name = "birthYeaComboBox";
-            this.birthYeaComboBox.Size = new System.Drawing.Size(79, 24);
-            this.birthYeaComboBox.TabIndex = 14;
-            // 
             // InscriptionForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -222,6 +225,7 @@
             this.Controls.Add(this.connectionPanel);
             this.Name = "InscriptionForm";
             this.Text = "InscriptionForm";
+            this.TopMost = true;
             this.Load += new System.EventHandler(this.InscriptionForm_Load);
             this.connectionPanel.ResumeLayout(false);
             this.connectionPanel.PerformLayout();
@@ -242,10 +246,10 @@
         private System.Windows.Forms.Button inscriptionButton;
         private System.Windows.Forms.Label repeatPasswordLabel;
         private System.Windows.Forms.TextBox repeatPasswordTextBox;
-        private System.Windows.Forms.Label passwordErrorLabel;
+        private System.Windows.Forms.Label passwordsChecksLabel;
         private System.Windows.Forms.Label genderLabel;
         private System.Windows.Forms.Label birthYearLabel;
         private System.Windows.Forms.ComboBox genderComboBox;
-        private System.Windows.Forms.ComboBox birthYeaComboBox;
+        private System.Windows.Forms.ComboBox birthYearComboBox;
     }
 }

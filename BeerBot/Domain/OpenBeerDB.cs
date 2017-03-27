@@ -23,7 +23,7 @@ namespace Domain
             users = getUsers();
         }
 
-        public List<User> getUsers()
+        private List<User> getUsers()
         {
             List<string[]> usersAttributes = Select(new string[] { "id", "name", "password", "birth_year", "gender" }, "users");
             List<User> users = new List<User> { };
@@ -37,6 +37,14 @@ namespace Domain
                     bool.Parse(userAttributes[4])));
             }
             return users;
+        }
+
+        public void AddUser(string name, string password, string gender, string birthYear)
+        {
+            string[] rows = new string[] { "name", "password", "gender", "birth_year" };
+            string[] values = new string[] { name, password, gender, birthYear };
+            Insert("users", rows, values);
+            users = getUsers();
         }
 
         private void generateFactFile()

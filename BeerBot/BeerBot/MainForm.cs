@@ -13,8 +13,8 @@ namespace BeerBot
 {
     public partial class MainForm : Form
     {
-        public static OpenBeerDB database;
-        public static User loggedUser;
+        public OpenBeerDB database;
+        public User loggedUser;
 
         public static int userId;
         public static string userName;
@@ -27,11 +27,12 @@ namespace BeerBot
         private void MainForm_Load(object sender, EventArgs e)
         {
             ConnectionForm connectionForm = new ConnectionForm();
+            AddOwnedForm(connectionForm);
             connectionForm.Show();
-            connectionForm.FormClosing += new FormClosingEventHandler(this.ConnectionForm_FormClosing);
+            connectionForm.Disposed += ConnectionForm_Disposed;
         }
 
-        private void ConnectionForm_FormClosing(object sender, FormClosingEventArgs e)
+        private void ConnectionForm_Disposed(object sender, EventArgs e)
         {
             if (loggedUser == null)
             {
@@ -39,7 +40,7 @@ namespace BeerBot
                 string caption = "Erreur";
                 MessageBoxButtons button = MessageBoxButtons.OK;
                 DialogResult msgBox = MessageBox.Show(msg, caption, button);
-                this.Close();
+                Close();
             }
             else
             {
