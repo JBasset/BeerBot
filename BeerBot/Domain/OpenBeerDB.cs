@@ -25,7 +25,7 @@ namespace Domain
 
         public List<User> getUsers()
         {
-            List<string[]> usersAttributes = Select(new string[] { "id", "name", "password", "birth_year", "gender", "social_cat_id" }, "users");
+            List<string[]> usersAttributes = Select(new string[] { "id", "name", "password", "birth_year", "gender" }, "users");
             List<User> users = new List<User> { };
             foreach(string[] userAttributes in usersAttributes)
             {
@@ -34,8 +34,7 @@ namespace Domain
                     userAttributes[1],
                     userAttributes[2],
                     int.Parse(userAttributes[3]),
-                    bool.Parse(userAttributes[4]),
-                    userAttributes[5]));
+                    bool.Parse(userAttributes[4])));
             }
             return users;
         }
@@ -163,15 +162,6 @@ namespace Domain
             }
             #endregion
 
-            #region getting all social categories
-            List<string[]> socCats = Select(new string[] { "id" }, "social_categories");
-            foreach (string[] socCat in socCats)
-            {
-                string prologName = "socialCategory" + socCat[0];
-                lines.Add("socialCategory(" + prologName + ").");
-            }
-            #endregion
-
             #region getting all users
             List<string[]> users = Select(new string[] { "id" }, "users");
             foreach (string[] user in users)
@@ -197,16 +187,6 @@ namespace Domain
                 string prologName = "user" + gender[0];
                 string stringGender = (bool.Parse(gender[1])) ? "woman" : "man";
                 lines.Add("gender(" + prologName + "," + stringGender + ").");
-            }
-            #endregion
-
-            #region getting all users social categories
-            List<string[]> userSocCats = Select(new string[] { "id", "social_cat_id" }, "users");
-            foreach (string[] userSocCat in userSocCats)
-            {
-                string prologName = "user" + userSocCat[0];
-                string socCatPlName = "socialCategory" + userSocCat[1];
-                lines.Add("userSocialCategory(" + prologName + "," + socCatPlName + ").");
             }
             #endregion
 

@@ -35701,7 +35701,6 @@ styleCategory(style139,category11).
 styleCategory(style140,category11).
 styleCategory(style141,category11).
 styleCategory(unknownStyle,unknownCategory).
-socialCategory(socialCategory1).
 user(user1).
 user(user2).
 user(user3).
@@ -35726,14 +35725,6 @@ gender(user5,man).
 gender(user6,man).
 gender(user7,man).
 gender(user8,man).
-userSocialCategory(user1,socialCategory1).
-userSocialCategory(user2,socialCategory1).
-userSocialCategory(user3,socialCategory1).
-userSocialCategory(user4,socialCategory1).
-userSocialCategory(user5,socialCategory1).
-userSocialCategory(user6,socialCategory1).
-userSocialCategory(user7,socialCategory1).
-userSocialCategory(user8,socialCategory1).
 rates(user1,beer2222,4).
 rates(user1,beer4253,3).
 rates(user1,beer4339,1.5).

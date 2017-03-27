@@ -13,16 +13,14 @@ namespace Domain
         public string password { get; private set; }
         public int birthYear { get; private set; }
         public bool gender { get; private set; } // false for man, true for woman (let's pretend nobody's going to find that offensive)
-        public string socialCategory { get; private set; }
 
-        public User(int id, string name, string password, int birthYear, bool gender, string socialCategory)
+        public User(int id, string name, string password, int birthYear, bool gender)
         {
             this.id = id;
             this.name = name;
             this.password = password;
             this.birthYear = birthYear;
             this.gender = gender;
-            this.socialCategory = socialCategory;
         }
     }
 }

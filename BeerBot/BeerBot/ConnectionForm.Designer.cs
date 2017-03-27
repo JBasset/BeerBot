@@ -64,7 +64,7 @@
             // 
             this.errorLabel.AutoSize = true;
             this.errorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.errorLabel.Location = new System.Drawing.Point(6, 176);
+            this.errorLabel.Location = new System.Drawing.Point(9, 176);
             this.errorLabel.Name = "errorLabel";
             this.errorLabel.Size = new System.Drawing.Size(250, 32);
             this.errorLabel.TabIndex = 7;
@@ -128,6 +128,7 @@
             this.inscriptionButton.TabIndex = 1;
             this.inscriptionButton.Text = "Nouveau ? Inscrivez vous !";
             this.inscriptionButton.UseVisualStyleBackColor = false;
+            this.inscriptionButton.Click += new System.EventHandler(this.inscriptionButton_Click);
             // 
             // titleLabel
             // 
@@ -143,7 +144,7 @@
             // logoPanel
             // 
             this.logoPanel.BackColor = System.Drawing.Color.DarkGray;
-            this.logoPanel.Location = new System.Drawing.Point(57, 30);
+            this.logoPanel.Location = new System.Drawing.Point(60, 30);
             this.logoPanel.Name = "logoPanel";
             this.logoPanel.Size = new System.Drawing.Size(183, 268);
             this.logoPanel.TabIndex = 1;
@@ -158,7 +159,7 @@
             this.Controls.Add(this.connectionPanel);
             this.Name = "ConnectionForm";
             this.Text = "Connection";
-            this.Load += new System.EventHandler(this.ConnectionForm_Load);
+            this.TopMost = true;
             this.connectionPanel.ResumeLayout(false);
             this.connectionPanel.PerformLayout();
             this.ResumeLayout(false);

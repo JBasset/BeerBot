@@ -19,8 +19,7 @@ namespace TestProject
                     + " " + user.name
                     + " " + user.password
                     + " " + user.birthYear
-                    + " " + user.gender
-                    + " " + user.socialCategory);
+                    + " " + user.gender);
                 Console.WriteLine();
             }
         }

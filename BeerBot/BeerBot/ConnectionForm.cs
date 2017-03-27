@@ -14,6 +14,7 @@ namespace BeerBot
     public partial class ConnectionForm : Form
     {
         private OpenBeerDB db = new OpenBeerDB();
+        private User loggedUser;
 
         public ConnectionForm()
         {
@@ -22,7 +23,6 @@ namespace BeerBot
 
         private void connexionButton_Click(object sender, EventArgs e)
         {
-            User loggedUser = new User(0, "default", "", 1995, false, "default" );
             bool passwordError = false;
             foreach(User user in db.users)
             {
@@ -39,21 +39,23 @@ namespace BeerBot
                     break;
                 }
             }
-            if (loggedUser.id == 0 && !passwordError) // if the logged user isn't defined
+            if (loggedUser == null && !passwordError) // if the logged user isn't defined, and it's not because the password is wrong
             {
                 errorLabel.Text = "Cet utilisateur n'existe pas";
                 errorLabel.Visible = true;
             }
             else
             {
-                MainForm mainForm = new MainForm();
-                Close();
+                MainForm.database = db;
+                MainForm.loggedUser = loggedUser;
+                this.Close();
             }
         }
 
-        private void ConnectionForm_Load(object sender, EventArgs e)
+        private void inscriptionButton_Click(object sender, EventArgs e)
         {
-            BringToFront();
+            InscriptionForm inscrForm = new InscriptionForm();
+            inscrForm.Show();
         }
     }
 }
