@@ -95,8 +95,8 @@ namespace BeerBot
                 errorLabel.Visible = false;
                 string name = usernameTextBox.Text;
                 string password = passwordTextBox.Text;
-                string gender = (genderComboBox.SelectedText == "H") ? "0" : "1";
-                string birthYear = birthYearComboBox.SelectedText;
+                string gender = (genderComboBox.SelectedItem.ToString() == "H") ? "0" : "1";
+                string birthYear = birthYearComboBox.SelectedItem.ToString();
                 (Owner as ConnectionForm).db.AddUser(name, password, gender, birthYear);
                 foreach (User user in (Owner as ConnectionForm).db.users)
                 {
