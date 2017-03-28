@@ -16,8 +16,7 @@ namespace BeerBot
         public OpenBeerDB database;
         public User loggedUser;
 
-        public static int userId;
-        public static string userName;
+        private bool logOffPanelShow = false;
 
         public MainForm()
         {
@@ -26,10 +25,13 @@ namespace BeerBot
 
         private void MainForm_Load(object sender, EventArgs e)
         {
+            // connection of a user
             ConnectionForm connectionForm = new ConnectionForm();
             AddOwnedForm(connectionForm);
             connectionForm.Show();
             connectionForm.Disposed += ConnectionForm_Disposed;
+
+            userLogoPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\user.png");
         }
 
         private void ConnectionForm_Disposed(object sender, EventArgs e)
@@ -44,8 +46,26 @@ namespace BeerBot
             }
             else
             {
-                label1.Text = loggedUser.name;
+                userNameLabel.Text = loggedUser.name;
+                userNameLabel.Visible = true;
+                this.Enabled = true;
             }
+        }
+
+        private void quitButton_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void logOffButton_Click(object sender, EventArgs e)
+        {
+            loggedUser = null;
+            userNameLabel.Visible = false;
+            this.Enabled = false;
+            ConnectionForm connectionForm = new ConnectionForm();
+            AddOwnedForm(connectionForm);
+            connectionForm.Show();
+            connectionForm.Disposed += ConnectionForm_Disposed;
         }
     }
 }

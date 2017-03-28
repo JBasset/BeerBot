@@ -158,7 +158,7 @@
             this.Controls.Add(this.logoPanel);
             this.Controls.Add(this.connectionPanel);
             this.Name = "ConnectionForm";
-            this.Text = "Connection";
+            this.Text = "Connexion";
             this.TopMost = true;
             this.connectionPanel.ResumeLayout(false);
             this.connectionPanel.PerformLayout();
