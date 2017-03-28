@@ -13,10 +13,9 @@ namespace BeerBot
 {
     public partial class MainForm : Form
     {
+        public BeerPrologEngine engine;
         public OpenBeerDB database;
         public User loggedUser;
-
-        private bool logOffPanelShow = false;
 
         public MainForm()
         {
@@ -48,6 +47,7 @@ namespace BeerBot
             {
                 userNameLabel.Text = loggedUser.name;
                 userNameLabel.Visible = true;
+                engine = new BeerPrologEngine(database);
                 this.Enabled = true;
             }
         }
@@ -66,6 +66,12 @@ namespace BeerBot
             AddOwnedForm(connectionForm);
             connectionForm.Show();
             connectionForm.Disposed += ConnectionForm_Disposed;
+        }
+
+        private void beerAdviceButton_Click(object sender, EventArgs e)
+        {
+            List<string> result = engine.adviceOnKind(loggedUser);
+            beerNameLabel.Text = result[0];
         }
     }
 }

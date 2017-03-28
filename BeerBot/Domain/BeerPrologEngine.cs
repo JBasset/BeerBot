@@ -11,29 +11,42 @@ namespace Domain
         // Manipulations of the prolog engine will use this class
     {
         public PrologEngine engine { get; private set; }
+        public OpenBeerDB database { get; private set; }
 
-        public BeerPrologEngine()
+        public BeerPrologEngine(OpenBeerDB database)
         {
+            this.database = database;
             engine = new PrologEngine();
-            createFactsFromDatabase();
-        }
-
-        private void createFactsFromDatabase()
-        {
-            // Creating the database class also writes all facts from the database in a prolog file
-            OpenBeerDB db = new OpenBeerDB();
             engine.Consult("..\\..\\..\\PrologEngine\\facts.pl");
+            engine.Consult("..\\..\\..\\PrologEngine\\predicates.pl");
         }
 
-        public List<string> AskPrologEngine(string functor, string[] args)
+        public List<string> adviceOnKind(User user)
+        {
+            string[] args = new string[] { user.getPrologName(), "B" };
+            List<string> results = AskPrologEngine("adviceOnKind", args);
+
+            List<string> beers = new List<string> { };
+            foreach(string result in results)
+            {
+                if (result.Length > 11) // else, this result is not a value for B and getBeerName will find a out of range exeption
+                    beers.Add(getBeerName(result));
+            }
+            foreach(string beer in beers)
+            {
+                //get the name from the ID
+            }
+            return beers;
+        }
+
+        private List<string> AskPrologEngine(string functor, string[] args)
         {
             // Creating the query's string
             string query = "";
             query += functor + "(";
             foreach(string arg in args)
             {
-                PrologEngine.BaseTerm argBaseTerm = engine.NewIsoOrCsStringTerm(arg);
-                query += argBaseTerm.ToString() + ",";
+                query += arg + ",";
             }
             query = query.Substring(0, query.Length-1); // suppressing the last comma
             query += ").";
@@ -46,6 +59,20 @@ namespace Domain
                 result.Add(s.ToString());
             }
             return result;
+        }
+
+        private string getBeerName(string queryResult) // getting the name of a beer from a query result such as : "B = beer338 (5,5 sec)"
+        {
+            queryResult = queryResult.Substring(11);
+            string beerName = "";
+            foreach(char c in queryResult)
+            {
+                if (c != ' ')
+                    beerName += c;
+                else
+                    break;
+            }
+            return beerName;
         }
     }
 }

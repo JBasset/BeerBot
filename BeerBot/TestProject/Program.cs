@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain;
+using Prolog;
 
 namespace TestProject
 {
@@ -11,17 +12,17 @@ namespace TestProject
     {
         static void Main(string[] args)
         {
-            OpenBeerDB db = new OpenBeerDB();
-
-            foreach(User user in db.users)
+            string queryResult = "B = beer338 (153,177 sec)";
+            queryResult = queryResult.Substring(8);
+            string beerName = "";
+            foreach (char c in queryResult)
             {
-                Console.Write(user.id
-                    + " " + user.name
-                    + " " + user.password
-                    + " " + user.birthYear
-                    + " " + user.gender);
-                Console.WriteLine();
+                if (c != ' ')
+                    beerName += c;
+                else
+                    break;
             }
+            Console.WriteLine(beerName);
         }
     }
 }

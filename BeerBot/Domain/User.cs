@@ -14,6 +14,11 @@ namespace Domain
         public int birthYear { get; private set; }
         public bool gender { get; private set; } // false for man, true for woman (let's pretend nobody's going to find that offensive)
 
+        public string getPrologName()
+        {
+            return "user" + id;
+        }
+
         public User(int id, string name, string password, int birthYear, bool gender)
         {
             this.id = id;
