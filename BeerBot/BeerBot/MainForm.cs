@@ -13,9 +13,14 @@ namespace BeerBot
 {
     public partial class MainForm : Form
     {
-        public BeerPrologEngine engine;
-        public OpenBeerDB database;
-        public User loggedUser;
+        /* Main form of the application. This is where the logged user can ask for an advice based on his profile and conditions he fixes */
+
+        // adviceConditionPanel : panel where the conditions on the advice will be asked to the user
+        // advicePanel : panel where the result of the advice appears
+
+        public BeerPrologEngine engine; // the prolog engine to which the advice will be asked
+        public OpenBeerDB database; // the database containing all data for the application
+        public User loggedUser; // the logged user, to whom the application gives the advice
 
         public MainForm()
         {
@@ -31,11 +36,14 @@ namespace BeerBot
             connectionForm.Disposed += ConnectionForm_Disposed;
 
             userLogoPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\user.png");
+            beerPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\pint.png");
+            arrowPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\next.png");
         }
 
         private void ConnectionForm_Disposed(object sender, EventArgs e)
         {
             if (loggedUser == null)
+                // when the connection form closes, if no user is logged then the application can't work, so it closes too
             {
                 string msg = "Pas d'utilisateur connecté, fermeture de l'application.";
                 string caption = "Erreur";
@@ -70,8 +78,10 @@ namespace BeerBot
 
         private void beerAdviceButton_Click(object sender, EventArgs e)
         {
-            List<string> result = engine.adviceOnKind(loggedUser);
-            beerNameLabel.Text = result[0];
+            beerNameLabel.Text = "Veuillez patientier, la recherche est en cours...";
+            beerNameLabel.Visible = true;
+            List <Beer> result = engine.adviceOnKind(loggedUser);
+            beerNameLabel.Text = result[0].name;
         }
     }
 }

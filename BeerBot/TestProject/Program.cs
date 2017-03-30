@@ -12,17 +12,9 @@ namespace TestProject
     {
         static void Main(string[] args)
         {
-            string queryResult = "B = beer338 (153,177 sec)";
-            queryResult = queryResult.Substring(8);
-            string beerName = "";
-            foreach (char c in queryResult)
-            {
-                if (c != ' ')
-                    beerName += c;
-                else
-                    break;
-            }
-            Console.WriteLine(beerName);
+            OpenBeerDB db = new OpenBeerDB();
+            foreach (Beer beer in db.beers)
+                Console.WriteLine(beer.name);
         }
     }
 }

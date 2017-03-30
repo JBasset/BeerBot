@@ -15,12 +15,14 @@ namespace Domain
         private MySqlConnection connection;
 
         public List<User> users { get; private set; }
+        public List<Beer> beers { get; private set; }
 
         public OpenBeerDB()
         {
             connection = new MySqlConnection(mySqlConnectionString);
             generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
             users = getUsers();
+            beers = getBeers();
         }
 
         private List<User> getUsers()
@@ -37,6 +39,29 @@ namespace Domain
                     bool.Parse(userAttributes[4])));
             }
             return users;
+        }
+
+        private List<Beer> getBeers()
+        {
+            List<string[]> beersAttributes = Select(new string[]
+            {
+                "id", "name", "cat_id", "style_id", "abv", "ibu", "srm", "descript"
+            }, "beers");
+            List<Beer> beers = new List<Beer> { };
+            foreach (string[] beerAttributes in beersAttributes)
+            {
+                beers.Add(new Beer(
+                    beerAttributes[1],
+                    beerAttributes[7],
+                    int.Parse(beerAttributes[0]),
+                    int.Parse(beerAttributes[2]),
+                    int.Parse(beerAttributes[3]),
+                    double.Parse(beerAttributes[4]),
+                    double.Parse(beerAttributes[5]),
+                    double.Parse(beerAttributes[6])
+                    ));
+            }
+            return beers;
         }
 
         public void AddUser(string name, string password, string gender, string birthYear)

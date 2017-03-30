@@ -8,10 +8,12 @@ using Prolog;
 namespace Domain
 {
     public class BeerPrologEngine
-        // Manipulations of the prolog engine will use this class
+    // Manipulations of the prolog engine will use this class
     {
         public PrologEngine engine { get; private set; }
         public OpenBeerDB database { get; private set; }
+
+        private string query;
 
         public BeerPrologEngine(OpenBeerDB database)
         {
@@ -21,20 +23,17 @@ namespace Domain
             engine.Consult("..\\..\\..\\PrologEngine\\predicates.pl");
         }
 
-        public List<string> adviceOnKind(User user)
+        public List<Beer> adviceOnKind(User user)
+                // ultimately this function will return not strings but objects from the class Beer.cs
         {
             string[] args = new string[] { user.getPrologName(), "B" };
             List<string> results = AskPrologEngine("adviceOnKind", args);
 
-            List<string> beers = new List<string> { };
+            List<Beer> beers = new List<Beer> { };
             foreach(string result in results)
             {
                 if (result.Length > 11) // else, this result is not a value for B and getBeerName will find a out of range exeption
-                    beers.Add(getBeerName(result));
-            }
-            foreach(string beer in beers)
-            {
-                //get the name from the ID
+                    beers.Add(getBeerFromQueryResult(result));
             }
             return beers;
         }
@@ -61,18 +60,24 @@ namespace Domain
             return result;
         }
 
-        private string getBeerName(string queryResult) // getting the name of a beer from a query result such as : "B = beer338 (5,5 sec)"
+        private Beer getBeerFromQueryResult(string queryResult) // getting the name of a beer from a query result such as : "B = beer338 (5,5 sec)"
         {
             queryResult = queryResult.Substring(11);
-            string beerName = "";
+            string beerIdString = "";
             foreach(char c in queryResult)
             {
                 if (c != ' ')
-                    beerName += c;
+                    beerIdString += c;
                 else
                     break;
             }
-            return beerName;
+            int beerId = int.Parse(beerIdString);
+            foreach(Beer beer in database.beers)
+            {
+                if (beer.id == beerId)
+                    return beer;
+            }
+            return new Beer();
         }
     }
 }
