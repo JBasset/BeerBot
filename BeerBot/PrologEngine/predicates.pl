@@ -1,7 +1,8 @@
 /* this line reads the facts in facts.pl, and is used to test the predicates. However, the C#Prolog engine doesn't recognize the consult command, so it must stay commented while not testing. (the main program calls an equivalent of consult, so all the facts are available in the engine) */
-% :- consult("facts.pl").
+:- consult("facts.pl").
 
 /* "dynamic" doesn't exists in C#Prolog, but every predicate / fact can be used as if it were defined as dynamic in the prolog engine. Thus, these lines must stay commented out of testing (C#Prolog will ignore them anyway, but leaving them commented avoid the warning message). */
+:- dynamic score/2.
 
 /* sorting a list of beer in descending order of their average rating */
 maximumRating([],_,0).
@@ -22,10 +23,24 @@ sortByRating(L1,[H2|T2]) :-
 	deleteElement(H2,L1,L3),
 	sortByRating(L3,T2), !.
 
+/* Sorting a list of beer from their scores */
+maximumScore([],_,0).
+maximumScore([H|T],B,M) :-
+	beer(H),
+	maximumScore(T,B1,M1),
+	(score(H,AR); AR is 0),
+	((AR > M1, M is AR, B = H);
+	(AR =< M1, M is M1, B = B1)),!.
+
+sortByScore([],[]).
+sortByScore(L1,[H2|T2]) :-
+	maximumScore(L1,H2,_),
+	deleteElement(H2,L1,L3),
+	sortByScore(L3,T2), !.
+
 /* getting the elements of the list */
 inList(E,[E|_]).
 inList(E,[_|T]) :- inList(E,T).
-
 
 /* Sum of the elements of the list L */
 sum([],0).
@@ -76,25 +91,65 @@ significativelyKnownBeer(B) :-
 	findall(R, rates(_,B,R), Z),
 	length(Z,L),
 	L > 4. % We consider the beer to be known enough for at least 5 ratings.
-	
-/* Predicates used to advice the user ; it will probably change a lot*/
-advice(U,B) :-
-	adviceOnKind(U,B),
-	adviceOnRating(U,B,_).
 
 /* advice given on the users liked categories or styles */
 adviceOnKind(U,B) :-
+	(
 	findall(B1,
-	(likesSignificatively(U,K),beerCategory(B1,K),not(rates(U,B1,_))),
-	L),
+	(
+		likesSignificatively(U,K),
+		beerCategory(B1,K),
+		not(rates(U,B1,_))
+	),L),
 	sortByRating(L,SL),
-	inList(B,SL).
+	inList(B,SL)
+	).
 
 /* gives a list of all known enough beers in order of average ratings ; the higher the average rating the higher the beer in the list */
+/* this predicate will be used as a default predicates if not enough information are known on the user */
 adviceOnRating(U,B,R) :-
 	findall(B1,(significativelyKnownBeer(B1),beerAverageRating(B1,_),not(rates(U,B1,_))),L),
 	sortByRating(L,SL),
 	inList(B,SL),
 	beerAverageRating(B,R).
+
+advice(User,B) :-
+	generateScores(User),
+	sortByScore(Lb),
+	inList(B,Lb).
+
+/* increment a beer's score */
+addScore(Beer,X) :-
+	(
+		score(Beer,Score),
+		retract(score(Beer,Score)),
+		NScore is Score + X,
+		assert(score(Beer,NScore)),!
+	);
+	(
+		not(score(Beer,_)),
+		assert(score(Beer,X))
+	).
+
+generateScores(User) :-
+	kindScore(User),
+	rateScore(3),
+	rateScore(4).
 	
-/*  */
+kindScore(User) :-
+	findall(X,(beer(X),
+		(
+			likesSignificatively(User,Kind),
+			beerCategory(X,Kind),
+			addScore(X,1)
+		)
+	),_).
+
+rateScore(Rate) :-
+	findall(X,(beer(X),
+		(
+			beerAverageRating(X,R),
+			R >= Rate,
+			addScore(X,1)
+		)
+	),_).
