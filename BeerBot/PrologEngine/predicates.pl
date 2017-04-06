@@ -1,8 +1,28 @@
-/* this line reads the facts in facts.pl, and is used to test the predicates. However, the C#Prolog engine doesn't recognize the consult command, so it must stay commented while not testing. (the main program calls an equivalent of consult, so all the facts are available in the engine) */
+/* consulting the facts created from the database */
 :- consult("facts.pl").
 
-/* "dynamic" doesn't exists in C#Prolog, but every predicate / fact can be used as if it were defined as dynamic in the prolog engine. Thus, these lines must stay commented out of testing (C#Prolog will ignore them anyway, but leaving them commented avoid the warning message). */
 :- dynamic score/2.
+
+/* predicates used to read and write in a txt file */
+
+readFromFile(L) :-
+	open('CSToProlog.txt', read, File), % informations from the C# interface
+	reader(File,L),
+	close(File).
+
+reader(File,L) :-
+	read_line_to_codes(File, T),
+	(
+		T  = end_of_file -> L = [];
+		atom_codes(T1, T),
+		reader(File,L1), L = [T1 | L1]
+	).
+	
+writeToFile(L) :-
+	open('PrologToCS.txt', write, File), % informations sent to the C# interface
+	forall(inList(E,L),
+	(write(File,E),nl(File))),
+	close(File).
 
 /* sorting a list of beer in descending order of their average rating */
 maximumRating([],_,0).
@@ -38,6 +58,11 @@ sortByScore(L1,[H2|T2]) :-
 	deleteElement(H2,L1,L3),
 	sortByScore(L3,T2), !.
 
+/* generates a list of sorted scores */
+sortedScores(L) :-
+	findall(Beer,score(Beer,_),BeerList),
+	sortByScore(BeerList,L).
+
 /* getting the elements of the list */
 inList(E,[E|_]).
 inList(E,[_|T]) :- inList(E,T).
@@ -51,17 +76,29 @@ sum([H|T],S) :-
 /* Number of beers rated by the User in the style or category X */
 beersRated(U,X,N) :-
 	(
-	(category(X),findall(B,(rates(U,B,_),beerCategory(B,X)),Z));
-	(style(X), findall(B,(rates(U,B,_),beerStyle(B,X)),Z))
+		(
+			category(X),
+			findall(B,(rates(U,B,_),beerCategory(B,X)),Z)
+		);
+		(
+			style(X),
+			findall(B,(rates(U,B,_),beerStyle(B,X)),Z)
+		)
 	),
 	length(Z,N).
-/* it would be possible to have the same predicate with a "forall" instead, which would be less complex because it wouldn't need to create a list just for reading its length. However, C#Prolog doesn't know "forall", so this solution can't be used */
 	
 /* the Average Rating the User gives to the style or category X */
 averageRating(U,X,AR) :-
 	(
-	(category(X),findall(R,(rates(U,B,R),beerCategory(B,X)),Z),!);
-	(style(X), findall(R,(rates(U,B,R),beerStyle(B,X)),Z))
+		(
+			category(X),
+			findall(R,(rates(U,B,R),beerCategory(B,X)),Z),
+			!
+		);
+		(
+			style(X),
+			findall(R,(rates(U,B,R),beerStyle(B,X)),Z)
+		)
 	),
 	length(Z,L),
 	L =\= 0, % we might want to avoid dividing by zero
@@ -113,43 +150,51 @@ adviceOnRating(U,B,R) :-
 	inList(B,SL),
 	beerAverageRating(B,R).
 
-advice(User,B) :-
-	generateScores(User),
-	sortByScore(Lb),
-	inList(B,Lb).
-
 /* increment a beer's score */
-addScore(Beer,X) :-
+incScore(Beer) :-
 	(
 		score(Beer,Score),
 		retract(score(Beer,Score)),
-		NScore is Score + X,
+		NScore is Score + 1,
 		assert(score(Beer,NScore)),!
 	);
 	(
 		not(score(Beer,_)),
-		assert(score(Beer,X))
+		assert(score(Beer,1))
 	).
 
-generateScores(User) :-
-	kindScore(User),
-	rateScore(3),
-	rateScore(4).
+adviceFromCS :-
+	readFromFile(L),
+	forall(inList(E,L),
+	(
+		user(E),
+		advice(E,LB),
+		writeToFile(LB)
+	)).
 	
-kindScore(User) :-
-	findall(X,(beer(X),
-		(
-			likesSignificatively(User,Kind),
-			beerCategory(X,Kind),
-			addScore(X,1)
-		)
-	),_).
+advice(User,LB) :-
+	retractall(score(_,_)), % we need first to clean the previous advices
+	generateScores(User),
+	sortedScores(LB).
 
-rateScore(Rate) :-
-	findall(X,(beer(X),
+generateScores(User) :-
+	forall(beer(X),% we increment the score of the beer
+	(
 		(
+			((likesSignificatively(User,Kind),
+			beerCategory(X,Kind),
+			incScore(X));true) % if the beer is of kind the user likes
+		),
+		(
+			((significativelyKnownBeer(X),
 			beerAverageRating(X,R),
-			R >= Rate,
-			addScore(X,1)
+			R >= 3,
+			incScore(X));true)% if the beer is well rated
+		),
+		(
+			((significativelyKnownBeer(X),
+			beerAverageRating(X,R),
+			R >= 3,
+			incScore(X));true)% if the beer is very well rated
 		)
-	),_).
+	)).
