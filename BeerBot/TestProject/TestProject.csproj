@@ -50,10 +50,6 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CSProlog\CSProlog.csproj">
-      <Project>{721e06ef-2be2-44bf-a0b7-bbe163a29f26}</Project>
-      <Name>CSProlog</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Domain\Domain.csproj">
       <Project>{9a83b699-08b3-4004-a6ef-ae10cbc72962}</Project>
       <Name>Domain</Name>

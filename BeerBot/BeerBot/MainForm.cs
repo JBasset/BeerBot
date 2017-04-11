@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 using Domain;
+using System.Threading;
 
 namespace BeerBot
 {
@@ -18,17 +20,16 @@ namespace BeerBot
         // adviceConditionPanel : panel where the conditions on the advice will be asked to the user
         // advicePanel : panel where the result of the advice appears
 
-        public BeerPrologEngine engine; // the prolog engine to which the advice will be asked
+        private List<Beer> results;
+
+        public PrologEngine engine; // the prolog engine to which the advice will be asked
         public OpenBeerDB database; // the database containing all data for the application
         public User loggedUser; // the logged user, to whom the application gives the advice
 
         public MainForm()
         {
             InitializeComponent();
-        }
 
-        private void MainForm_Load(object sender, EventArgs e)
-        {
             // connection of a user
             ConnectionForm connectionForm = new ConnectionForm();
             AddOwnedForm(connectionForm);
@@ -43,7 +44,7 @@ namespace BeerBot
         private void ConnectionForm_Disposed(object sender, EventArgs e)
         {
             if (loggedUser == null)
-                // when the connection form closes, if no user is logged then the application can't work, so it closes too
+            // when the connection form closes, if no user is logged then the application can't work, so it closes too
             {
                 string msg = "Pas d'utilisateur connecté, fermeture de l'application.";
                 string caption = "Erreur";
@@ -55,7 +56,7 @@ namespace BeerBot
             {
                 userNameLabel.Text = loggedUser.name;
                 userNameLabel.Visible = true;
-                engine = new BeerPrologEngine(database);
+                engine = new PrologEngine(database);
                 this.Enabled = true;
             }
         }
@@ -78,10 +79,23 @@ namespace BeerBot
 
         private void beerAdviceButton_Click(object sender, EventArgs e)
         {
-            beerNameLabel.Text = "Veuillez patientier, la recherche est en cours...";
-            beerNameLabel.Visible = true;
-            List <Beer> result = engine.adviceOnKind(loggedUser);
-            beerNameLabel.Text = result[0].name;
+            string[] conditions = new string[] { loggedUser.getPrologName() };
+            if (engine.AskAdvice(conditions))
+            {
+                beerNameLabel.Text = "Veuillez patientier, la recherche est en cours...";
+                beerNameLabel.Visible = true;
+            }
+            else
+            {
+                beerNameLabel.Text = "Un problème a été rencontré.";
+                beerNameLabel.Visible = true;
+            }
+        }
+
+        private void answerLoadButton_Click(object sender, EventArgs e)
+        {
+            results = engine.GetAdviceResults();
+            beerNameLabel.Text = results[0].name;
         }
     }
 }

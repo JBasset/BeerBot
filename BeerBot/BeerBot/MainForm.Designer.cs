@@ -40,6 +40,7 @@
             this.advicePanel = new System.Windows.Forms.Panel();
             this.beerPictureBox = new System.Windows.Forms.PictureBox();
             this.arrowPictureBox = new System.Windows.Forms.PictureBox();
+            this.answerLoadButton = new System.Windows.Forms.Button();
             this.userPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.userLogoPictureBox)).BeginInit();
             this.adviceConditionPanel.SuspendLayout();
@@ -155,6 +156,7 @@
             // 
             this.advicePanel.BackColor = System.Drawing.Color.SlateGray;
             this.advicePanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.advicePanel.Controls.Add(this.answerLoadButton);
             this.advicePanel.Controls.Add(this.beerNameLabel);
             this.advicePanel.Location = new System.Drawing.Point(512, 78);
             this.advicePanel.Name = "advicePanel";
@@ -179,6 +181,18 @@
             this.arrowPictureBox.TabIndex = 6;
             this.arrowPictureBox.TabStop = false;
             // 
+            // answerLoadButton
+            // 
+            this.answerLoadButton.BackColor = System.Drawing.Color.SteelBlue;
+            this.answerLoadButton.Location = new System.Drawing.Point(6, 29);
+            this.answerLoadButton.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
+            this.answerLoadButton.Name = "answerLoadButton";
+            this.answerLoadButton.Size = new System.Drawing.Size(88, 50);
+            this.answerLoadButton.TabIndex = 3;
+            this.answerLoadButton.Text = "Charger la réponse";
+            this.answerLoadButton.UseVisualStyleBackColor = false;
+            this.answerLoadButton.Click += new System.EventHandler(this.answerLoadButton_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -196,7 +210,6 @@
             this.Margin = new System.Windows.Forms.Padding(3, 4, 3, 4);
             this.Name = "MainForm";
             this.Text = "MainForm";
-            this.Load += new System.EventHandler(this.MainForm_Load);
             this.userPanel.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.userLogoPictureBox)).EndInit();
             this.adviceConditionPanel.ResumeLayout(false);
@@ -223,5 +236,6 @@
         private System.Windows.Forms.Label adviceConditionTitleLabel;
         private System.Windows.Forms.PictureBox beerPictureBox;
         private System.Windows.Forms.PictureBox arrowPictureBox;
+        private System.Windows.Forms.Button answerLoadButton;
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Domain;
-using Prolog;
+using System.IO;
 
 namespace TestProject
 {
@@ -13,7 +13,8 @@ namespace TestProject
         static void Main(string[] args)
         {
             OpenBeerDB db = new OpenBeerDB();
-            foreach (Beer beer in db.beers)
+            PrologEngine engine = new PrologEngine(db);
+            foreach (Beer beer in engine.GetAdviceResults())
                 Console.WriteLine(beer.name);
         }
     }

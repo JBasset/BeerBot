@@ -1,7 +1,51 @@
 /* consulting the facts created from the database */
 :- consult("facts.pl").
 
-:- dynamic score/2.
+:- dynamic score/2, thisUser/1, advKind/1, minRating/1, minAbv/1, maxAbv/1, minIbu/1, maxIbu/1, minSrm/1, maxSrm/1.
+
+/* predicates used to clean the settings of the previous advice */
+cleanAdviceSettings :-
+	retractall(score(_,_)), retractall(thisUser(_)),
+	retractall(advKind(_)), retractall(minRating(_)),
+	retractall(minAbv(_)), retractall(maxAbv(_)),
+	retractall(minIbu(_)), retractall(maxIbu(_)),
+	retractall(minSrm(_)), retractall(maxSrm(_)).
+
+/* predicates used to create the conditions of the advice */
+setAdviceConditions :-
+	readFromFile(L),
+	forall(inList(E,L),
+	(
+		(
+			user(E),
+			assert(thisUser(E))
+		);
+		( % if the kind is not set yet
+			not(advKind(_)), assert(advKind(E)) 
+		);
+		( % if the minimum rating is not set yet
+			not(minRating(_)), atom_number(E,X), assert(minRating(X)) 
+		);
+		(% if the minimum ABV is not set yet
+			not(minAbv(_)), atom_number(E,X), assert(minAbv(X)) 
+		);
+		(% if the maximum ABV is not set yet
+			not(maxAbv(_)), atom_number(E,X), assert(maxAbv(X)) 
+		);
+		(% if the minimum IBU is not set yet
+			not(minIbu(_)), atom_number(E,X), assert(minIbu(X)) 
+		);
+		(% if the maximum IBU is not set yet
+			not(maxIbu(_)), atom_number(E,X), assert(maxIbu(X)) 
+		);
+		(% if the minimum SRM is not set yet
+			not(minSrm(_)), atom_number(E,X), assert(minSrm(X)) 
+		);
+		(% if the maximum SRM is not set yet
+			not(maxSrm(_)), atom_number(E,X), assert(maxSrm(X)) 
+		)
+	)).
+	
 
 /* predicates used to read and write in a txt file */
 
@@ -23,6 +67,7 @@ writeToFile(L) :-
 	forall(inList(E,L),
 	(write(File,E),nl(File))),
 	close(File).
+
 
 /* sorting a list of beer in descending order of their average rating */
 maximumRating([],_,0).
@@ -123,11 +168,12 @@ likesSignificatively(U,X) :-
 	AR > 3. % the average rating the user gives to beers in X is at least 3
 
 /* Is the beer B known significatively, i.e. rated by enough people for the average rating to be trusted */
-significativelyKnownBeer(B) :-
+beerRatingSignificance(B, Sig) :-
 	beer(B),
 	findall(R, rates(_,B,R), Z),
 	length(Z,L),
-	L > 4. % We consider the beer to be known enough for at least 5 ratings.
+	((L < 10, Sig is L*0.1,!);(L >= 10, Sig is 1)).
+	% under 10 ratings, we can ponderate reating of a beer with its significance
 
 /* advice given on the users liked categories or styles */
 adviceOnKind(U,B) :-
@@ -151,50 +197,97 @@ adviceOnRating(U,B,R) :-
 	beerAverageRating(B,R).
 
 /* increment a beer's score */
-incScore(Beer) :-
+incScore(Beer, Inc) :-
 	(
 		score(Beer,Score),
 		retract(score(Beer,Score)),
-		NScore is Score + 1,
+		NScore is Score + Inc,
 		assert(score(Beer,NScore)),!
 	);
 	(
 		not(score(Beer,_)),
-		assert(score(Beer,1))
+		assert(score(Beer,Inc))
 	).
 
-adviceFromCS :-
-	readFromFile(L),
-	forall(inList(E,L),
+setList(L) :-
+	findall(Beer,
 	(
-		user(E),
-		advice(E,LB),
-		writeToFile(LB)
+		beer(Beer),
+		(
+			advKind(Kind),
+			(
+				(
+					((category(Kind),beerCategory(Beer,Kind));
+					(style(Kind),beerStyle(Beer,Kind)))
+				);
+				not(category(Kind);style(Kind))
+			)
+		),
+		(
+			minRating(R),
+			((R =\= -1, beerAverageRating(Beer,Ar), Ar >= R,!);
+			R == -1)
+		),
+		(
+			minAbv(MinAbv),
+			((MinAbv =\= -1, abv(Beer,BeerAbv), BeerAbv >= MinAbv,!);
+			MinAbv == -1)
+		),
+		(
+			maxAbv(MaxAbv),
+			((MaxAbv =\= -1, abv(Beer,BeerAbv), BeerAbv =< MaxAbv,!);
+			MaxAbv == -1)
+		),
+		(
+			minIbu(MinIbu),
+			((MinIbu =\= -1, ibu(Beer,BeerIbu), BeerIbu >= MinIbu,!);
+			MinIbu == -1)
+		),
+		(
+			maxIbu(MaxIbu),
+			((MaxIbu =\= -1,ibu(Beer,BeerIbu), BeerIbu =< MaxIbu,!);
+			MaxIbu == -1)
+		),
+		(
+			minSrm(MinSrm),
+			((MinSrm =\= -1, srm(Beer,BeerSrm), BeerSrm >= MinSrm,!);
+			MinSrm == -1)
+		),
+		(
+			maxSrm(MaxSrm),
+			((MaxSrm =\= -1,srm(Beer,BeerSrm), BeerSrm =< MaxSrm,!);
+			MaxSrm == -1)
+		)
+	),L).
+	
+adviceFromCS :-
+	cleanAdviceSettings, % we need first to clean the previous advices
+	setAdviceConditions,
+	setList(L), % getting the beers corresponding the conditions
+	thisUser(User),
+	advice(User,L,AdvicedLB),
+	writeToFile(AdvicedLB).
+	
+advice(User,LB,AdvicedLB) :-
+	generateScores(User,LB),
+	sortedScores(AdvicedLB).
+
+generateScores(User,LB) :-
+	forall(inList(Beer,LB),% we increment the score of the beer
+	(
+		(kindScore(User,Beer);true), % if the beer is of a kind the user likes
+		(ratingScore(Beer);true)
 	)).
 	
-advice(User,LB) :-
-	retractall(score(_,_)), % we need first to clean the previous advices
-	generateScores(User),
-	sortedScores(LB).
-
-generateScores(User) :-
-	forall(beer(X),% we increment the score of the beer
+kindScore(User,Beer) :-
 	(
-		(
-			((likesSignificatively(User,Kind),
-			beerCategory(X,Kind),
-			incScore(X));true) % if the beer is of kind the user likes
-		),
-		(
-			((significativelyKnownBeer(X),
-			beerAverageRating(X,R),
-			R >= 3,
-			incScore(X));true)% if the beer is well rated
-		),
-		(
-			((significativelyKnownBeer(X),
-			beerAverageRating(X,R),
-			R >= 3,
-			incScore(X));true)% if the beer is very well rated
-		)
-	)).
+		(beerCategory(Beer,Cat), likesSignificatively(User,Cat));
+		(beerStyle(Beer,Sty), likesSignificatively(User,Sty))
+	),
+	incScore(Beer,1).
+	
+ratingScore(Beer) :-
+	beerAverageRating(Beer,Ar),
+	beerRatingSignificance(Beer,Sig),
+	Inc is (Sig * Ar) / 2,
+	incScore(Beer,Inc).

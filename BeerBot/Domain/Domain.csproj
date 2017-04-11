@@ -51,15 +51,9 @@
   <ItemGroup>
     <Compile Include="Beer.cs" />
     <Compile Include="OpenBeerDB.cs" />
-    <Compile Include="BeerPrologEngine.cs" />
+    <Compile Include="PrologEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="User.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CSProlog\CSProlog.csproj">
-      <Project>{721e06ef-2be2-44bf-a0b7-bbe163a29f26}</Project>
-      <Name>CSProlog</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
