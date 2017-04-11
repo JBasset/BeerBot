@@ -35,7 +35,10 @@ namespace Domain
             //Ultimately, this function will send a signal to prolog. For now this work is done manually
         {
             try
-            { File.WriteAllLines(CSToPrologPath, conditions); return true; }
+            {
+                File.WriteAllLines(CSToPrologPath, conditions);
+                return true;
+            }
             catch
             { return false; }
         }

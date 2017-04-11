@@ -13,9 +13,13 @@ namespace TestProject
         static void Main(string[] args)
         {
             OpenBeerDB db = new OpenBeerDB();
-            PrologEngine engine = new PrologEngine(db);
-            foreach (Beer beer in engine.GetAdviceResults())
-                Console.WriteLine(beer.name);
+            foreach (Category cat in db.categories)
+            {
+                Console.WriteLine(cat.name + " :\n");
+                foreach (Style style in cat.styles)
+                    Console.WriteLine("\t- "+style.name);
+                Console.WriteLine();
+            }
         }
     }
 }

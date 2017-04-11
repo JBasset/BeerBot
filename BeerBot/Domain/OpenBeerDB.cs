@@ -16,6 +16,7 @@ namespace Domain
 
         public List<User> users { get; private set; }
         public List<Beer> beers { get; private set; }
+        public List<Category> categories { get; private set; }
 
         public OpenBeerDB()
         {
@@ -23,6 +24,7 @@ namespace Domain
             generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
             users = getUsers();
             beers = getBeers();
+            categories = getCategories();
         }
 
         private List<User> getUsers()
@@ -62,6 +64,32 @@ namespace Domain
                     ));
             }
             return beers;
+        }
+
+        private List<Category> getCategories()
+        {
+            List<string[]> categoriesAttributes = Select(new string[]
+            {
+                "id", "cat_name"
+            }, "categories");
+            List<Category> categories = new List<Category> { };
+            foreach (string[] categoryAttributes in categoriesAttributes)
+            {
+                #region getting styles in this category
+                List<string[]> stylesAttributes = Select(new string[]
+                {
+                    "id", "cat_id", "style_name"
+                }, "styles");
+                List<Style> styles = new List<Style> { };
+                foreach (string[] styleAttributes in stylesAttributes)
+                {
+                    if (int.Parse(styleAttributes[1]) == int.Parse(categoryAttributes[0]))
+                        styles.Add(new Style(styleAttributes[2], int.Parse(styleAttributes[0])));
+                }
+                #endregion
+                categories.Add(new Category(categoryAttributes[1], int.Parse(categoryAttributes[0]), styles));
+            }
+            return categories;
         }
 
         public void AddUser(string name, string password, string gender, string birthYear)

@@ -39,6 +39,7 @@ namespace BeerBot
             userLogoPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\user.png");
             beerPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\pint.png");
             arrowPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\next.png");
+            conditionsPictureBox.Image = Image.FromFile(@"..\\..\\..\\Ressources\\list.png");
         }
 
         private void ConnectionForm_Disposed(object sender, EventArgs e)
@@ -79,16 +80,19 @@ namespace BeerBot
 
         private void beerAdviceButton_Click(object sender, EventArgs e)
         {
-            string[] conditions = new string[] { loggedUser.getPrologName() };
+            string a = "-1";
+            string[] conditions = new string[] { loggedUser.getPrologName(), a, a, a, a, a, a, a, a };
             if (engine.AskAdvice(conditions))
             {
-                beerNameLabel.Text = "Veuillez patientier, la recherche est en cours...";
+                loadingLabel.Text = "Tapez la commande \"adviceFromCS.\" dans le système Prolog predicates.pl, puis appuyez sur \"Charger la réponse\"";
+                loadingLabel.Visible = true;
+                beerNameLabel.Text = "La recherche est en cours...";
                 beerNameLabel.Visible = true;
             }
             else
             {
-                beerNameLabel.Text = "Un problème a été rencontré.";
-                beerNameLabel.Visible = true;
+                loadingLabel.Text = "Un problème a été rencontré.";
+                loadingLabel.Visible = true;
             }
         }
 
@@ -96,6 +100,7 @@ namespace BeerBot
         {
             results = engine.GetAdviceResults();
             beerNameLabel.Text = results[0].name;
+            beerNameLabel.Visible = true;
         }
     }
 }
