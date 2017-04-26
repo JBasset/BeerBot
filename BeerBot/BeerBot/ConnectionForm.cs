@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Domain;
 
-namespace BeerBot
+namespace AleVisor
 {
     public partial class ConnectionForm : Form
     {
@@ -37,12 +37,12 @@ namespace BeerBot
             }
             if (passwordError)
             {
-                errorLabel.Text = "Le mot de passe ne correspond pas";
+                errorLabel.Text = "The password doesn't match";
                 errorLabel.Visible = true;
             }
             else if (loggedUser == null)
             {
-                errorLabel.Text = "Cet utilisateur n'existe pas";
+                errorLabel.Text = "This user doesn't exist";
                 errorLabel.Visible = true;
             }
             else
@@ -55,7 +55,7 @@ namespace BeerBot
 
         private void inscriptionButton_Click(object sender, EventArgs e)
         {
-            InscriptionForm inscrForm = new InscriptionForm();
+            RegistrationForm inscrForm = new RegistrationForm();
             AddOwnedForm(inscrForm);
             inscrForm.Disposed += InscriptionForm_Disposed;
             inscrForm.Show();

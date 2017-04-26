@@ -65,7 +65,10 @@ reader(File,L) :-
 writeToFile(L) :-
 	open('PrologToCS.txt', write, File), % informations sent to the C# interface
 	forall(inList(E,L),
-	(write(File,E),nl(File))),
+	(
+		write(File,E),
+		nl(File)
+	)),
 	close(File).
 
 
@@ -131,6 +134,10 @@ beersRated(U,X,N) :-
 		)
 	),
 	length(Z,N).
+	
+/* Getting the list of all beers rated by the User */
+listRatedBeers(User,List) :-
+	findall(Beer,rates(User,Beer,_),List).
 	
 /* the Average Rating the User gives to the style or category X */
 averageRating(U,X,AR) :-
@@ -225,37 +232,37 @@ setList(L) :-
 		),
 		(
 			minRating(R),
-			((R =\= -1, beerAverageRating(Beer,Ar), Ar >= R,!);
+			((R =\= -1, beerAverageRating(Beer,Ar), Ar >= R);
 			R == -1)
 		),
 		(
 			minAbv(MinAbv),
-			((MinAbv =\= -1, abv(Beer,BeerAbv), BeerAbv >= MinAbv,!);
+			((MinAbv =\= -1, abv(Beer,BeerAbv), BeerAbv =\= -1, BeerAbv >= MinAbv);
 			MinAbv == -1)
 		),
 		(
 			maxAbv(MaxAbv),
-			((MaxAbv =\= -1, abv(Beer,BeerAbv), BeerAbv =< MaxAbv,!);
+			((MaxAbv =\= -1, abv(Beer,BeerAbv), BeerAbv =\= -1, BeerAbv =< MaxAbv);
 			MaxAbv == -1)
 		),
 		(
 			minIbu(MinIbu),
-			((MinIbu =\= -1, ibu(Beer,BeerIbu), BeerIbu >= MinIbu,!);
+			((MinIbu =\= -1, ibu(Beer,BeerIbu), BeerIbu =\= -1, BeerIbu >= MinIbu);
 			MinIbu == -1)
 		),
 		(
 			maxIbu(MaxIbu),
-			((MaxIbu =\= -1,ibu(Beer,BeerIbu), BeerIbu =< MaxIbu,!);
+			((MaxIbu =\= -1,ibu(Beer,BeerIbu), BeerIbu =\= -1, BeerIbu =< MaxIbu);
 			MaxIbu == -1)
 		),
 		(
 			minSrm(MinSrm),
-			((MinSrm =\= -1, srm(Beer,BeerSrm), BeerSrm >= MinSrm,!);
+			((MinSrm =\= -1, srm(Beer,BeerSrm), BeerSrm =\= -1, BeerSrm >= MinSrm);
 			MinSrm == -1)
 		),
 		(
 			maxSrm(MaxSrm),
-			((MaxSrm =\= -1,srm(Beer,BeerSrm), BeerSrm =< MaxSrm,!);
+			((MaxSrm =\= -1,srm(Beer,BeerSrm), BeerSrm =\= -1, BeerSrm =< MaxSrm);
 			MaxSrm == -1)
 		)
 	),L).
@@ -275,9 +282,16 @@ advice(User,LB,AdvicedLB) :-
 generateScores(User,LB) :-
 	forall(inList(Beer,LB),% we increment the score of the beer
 	(
+		incScore(Beer,0), % we initialize the score of each beer to 0
 		(kindScore(User,Beer);true), % if the beer is of a kind the user likes
-		(ratingScore(Beer);true)
+		(ratingScore(Beer);true),
+		(abvScore(User,Beer);true),
+		(ibuScore(User,Beer);true),
+		(srmScore(User,Beer);true),
+		(ageScore(User,Beer);true)
 	)).
+	
+/* predicates used to calculate a beers score */
 	
 kindScore(User,Beer) :-
 	(
@@ -290,4 +304,96 @@ ratingScore(Beer) :-
 	beerAverageRating(Beer,Ar),
 	beerRatingSignificance(Beer,Sig),
 	Inc is (Sig * Ar) / 2,
+	incScore(Beer,Inc).
+
+/* distance between X and Y */
+dist(X,Y,Dist) :-
+	(X-Y >= 0, Dist is X-Y);
+	(Y-X > 0, Dist is Y-X).
+
+/* average rating a user gives to a list of beers (known to him) */
+arList(User,List,AR) :-
+	findall(R,(
+		inList(B,List),
+		rates(User,B,R)
+	),L),
+	length(L,Length),
+	Length > 0,
+	sum(L,Sum),
+	AR is Sum / Length.
+	
+/* the score increases if the user likes beers with a close ABV*/
+abvScore(User,Beer) :-
+	abv(Beer,ThisAbv),
+	listRatedBeers(User,L),
+	findall(B,(
+		inList(B,L),
+		abv(B,Abv),
+		Abv =\= -1,
+		dist(ThisAbv,Abv,Dist),
+		Range is ThisAbv / 5,
+		Dist < Range
+	),AbvList),
+	length(AbvList,Length),
+	arList(User,AbvList,AR),
+	AR > 2.5, % if the average rating is too low, we don't want to advice that
+	Inc is (AR / 10) * Length,
+	incScore(Beer,Inc).
+	
+/* the score increases if the user likes beers with a close IBU*/
+ibuScore(User,Beer) :-
+	ibu(Beer,ThisIbu),
+	listRatedBeers(User,L),
+	findall(B,(
+		inList(B,L),
+		ibu(B,Ibu),
+		Ibu =\= -1,
+		dist(ThisIbu,Ibu,Dist),
+		Range is ThisIbu / 5,
+		Dist < Range
+	),IbuList),
+	length(IbuList,Length),
+	arList(User,IbuList,AR),
+	AR > 2.5, % if the average rating is too low, we don't want to advice that
+	Inc is (AR / 10) * Length,
+	incScore(Beer,Inc).
+	
+/* the score increases if the user likes beers with a close SRM*/
+srmScore(User,Beer) :-
+	srm(Beer,ThisSrm),
+	listRatedBeers(User,L),
+	findall(B,(
+		inList(B,L),
+		srm(B,Srm),
+		Srm =\= -1,
+		dist(ThisSrm,Srm,Dist),
+		Range is ThisSrm / 5,
+		Dist < Range
+	),SrmList),
+	length(SrmList,Length),
+	arList(User,SrmList,AR),
+	AR > 2.5, % if the average rating is too low, we don't want to advice that
+	Inc is (AR / 10) * Length,
+	incScore(Beer,Inc).
+	
+ageScore(User,Beer) :-
+	birthDate(User,ThisBD),
+	findall(U,(
+		user(U),
+		birthDate(U,BD),
+		dist(ThisBD,BD,Dist),
+		Dist < 3
+	),L),
+	findall(R,(
+		inList(U,L),
+		rates(U,Beer,R)
+	),ARL),
+	length(ARL,Length),
+	Length > 0,
+	sum(ARL,Sum),
+	AR is Sum / Length,
+	(
+		(Length < 10, Inc is (AR / 5) * (Length / 10));
+		(Length >= 10, Inc is AR)
+	),
 	incScore(Beer,Inc).

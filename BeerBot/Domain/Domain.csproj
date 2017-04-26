@@ -54,6 +54,7 @@
     <Compile Include="OpenBeerDB.cs" />
     <Compile Include="PrologEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Request.cs" />
     <Compile Include="Style.cs" />
     <Compile Include="User.cs" />
   </ItemGroup>

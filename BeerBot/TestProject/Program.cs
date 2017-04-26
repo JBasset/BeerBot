@@ -13,13 +13,7 @@ namespace TestProject
         static void Main(string[] args)
         {
             OpenBeerDB db = new OpenBeerDB();
-            foreach (Category cat in db.categories)
-            {
-                Console.WriteLine(cat.name + " :\n");
-                foreach (Style style in cat.styles)
-                    Console.WriteLine("\t- "+style.name);
-                Console.WriteLine();
-            }
+            db.Execute("DELETE FROM `ratings` WHERE `ratings`.`user_id` = 1 AND `ratings`.`beer_id` = 42");
         }
     }
 }

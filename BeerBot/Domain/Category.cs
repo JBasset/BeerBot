@@ -23,5 +23,10 @@ namespace Domain
         {
             return "category" + id;
         }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 }

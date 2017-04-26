@@ -9,13 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Domain;
 
-namespace BeerBot
+namespace AleVisor
 {
-    public partial class InscriptionForm : Form
+    public partial class RegistrationForm : Form
     {
         private bool passwordsChecks = false;
 
-        public InscriptionForm()
+        public RegistrationForm()
         {
             InitializeComponent();
         }
@@ -77,17 +77,32 @@ namespace BeerBot
         {
             if (!formComplete())
             {
-                errorLabel.Text = "Veuillez completer chaque\nchamps du formulaire.";
+                errorLabel.Text = "Please fill all form fields.";
                 errorLabel.Visible = true;
             }
             else if (!availableUsername())
             {
-                errorLabel.Text = "Ce nom d'utilisateur est déjà\npris.";
+                errorLabel.Text = "This user name is already\ntaken.";
+                errorLabel.Visible = true;
+            }
+            else if (usernameTextBox.Text.Length > 40)
+            {
+                errorLabel.Text = "The user name can't have\nmore than 40 characters.";
                 errorLabel.Visible = true;
             }
             else if (!passwordsChecks)
             {
-                errorLabel.Text = "Les mots de passe ne\ncorrespondent pas.";
+                errorLabel.Text = "passwords don't check.";
+                errorLabel.Visible = true;
+            }
+            else if (passwordTextBox.Text.Length < 8)
+            {
+                errorLabel.Text = "The password must be at\nleast 8 characters long.";
+                errorLabel.Visible = true;
+            }
+            else if (passwordTextBox.Text.Length > 40)
+            {
+                errorLabel.Text = "The password can't have\nmore than 40 characters.";
                 errorLabel.Visible = true;
             }
             else

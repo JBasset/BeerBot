@@ -1,6 +1,6 @@
-﻿namespace BeerBot
+﻿namespace AleVisor
 {
-    partial class InscriptionForm
+    partial class RegistrationForm
     {
         /// <summary>
         /// Required designer variable.
@@ -93,9 +93,9 @@
             this.birthYearLabel.AutoSize = true;
             this.birthYearLabel.Location = new System.Drawing.Point(83, 157);
             this.birthYearLabel.Name = "birthYearLabel";
-            this.birthYearLabel.Size = new System.Drawing.Size(65, 16);
+            this.birthYearLabel.Size = new System.Drawing.Size(57, 16);
             this.birthYearLabel.TabIndex = 13;
-            this.birthYearLabel.Text = "Né(e) en :";
+            this.birthYearLabel.Text = "Born in :";
             // 
             // genderComboBox
             // 
@@ -113,9 +113,9 @@
             this.genderLabel.AutoSize = true;
             this.genderLabel.Location = new System.Drawing.Point(9, 157);
             this.genderLabel.Name = "genderLabel";
-            this.genderLabel.Size = new System.Drawing.Size(46, 16);
+            this.genderLabel.Size = new System.Drawing.Size(58, 16);
             this.genderLabel.TabIndex = 11;
-            this.genderLabel.Text = "Sexe :";
+            this.genderLabel.Text = "Gender :";
             // 
             // passwordsChecksLabel
             // 
@@ -142,9 +142,9 @@
             this.repeatPasswordLabel.AutoSize = true;
             this.repeatPasswordLabel.Location = new System.Drawing.Point(9, 113);
             this.repeatPasswordLabel.Name = "repeatPasswordLabel";
-            this.repeatPasswordLabel.Size = new System.Drawing.Size(158, 16);
+            this.repeatPasswordLabel.Size = new System.Drawing.Size(116, 16);
             this.repeatPasswordLabel.TabIndex = 8;
-            this.repeatPasswordLabel.Text = "Repeter le mot de passe :";
+            this.repeatPasswordLabel.Text = "Repeat password :";
             // 
             // errorLabel
             // 
@@ -166,7 +166,7 @@
             this.inscriptionButton.Name = "inscriptionButton";
             this.inscriptionButton.Size = new System.Drawing.Size(104, 35);
             this.inscriptionButton.TabIndex = 6;
-            this.inscriptionButton.Text = "M\'inscrire";
+            this.inscriptionButton.Text = "Register";
             this.inscriptionButton.UseVisualStyleBackColor = false;
             this.inscriptionButton.Click += new System.EventHandler(this.inscriptionButton_Click);
             // 
@@ -184,9 +184,9 @@
             this.passwordLabel.AutoSize = true;
             this.passwordLabel.Location = new System.Drawing.Point(9, 69);
             this.passwordLabel.Name = "passwordLabel";
-            this.passwordLabel.Size = new System.Drawing.Size(95, 16);
+            this.passwordLabel.Size = new System.Drawing.Size(73, 16);
             this.passwordLabel.TabIndex = 4;
-            this.passwordLabel.Text = "Mot de passe :";
+            this.passwordLabel.Text = "Password :";
             // 
             // usernameTextBox
             // 
@@ -200,9 +200,9 @@
             this.usernameLabel.AutoSize = true;
             this.usernameLabel.Location = new System.Drawing.Point(9, 25);
             this.usernameLabel.Name = "usernameLabel";
-            this.usernameLabel.Size = new System.Drawing.Size(112, 16);
+            this.usernameLabel.Size = new System.Drawing.Size(79, 16);
             this.usernameLabel.TabIndex = 2;
-            this.usernameLabel.Text = "Nom d\'utilisateur :";
+            this.usernameLabel.Text = "User name :";
             // 
             // titleLabel
             // 
@@ -211,11 +211,11 @@
             this.titleLabel.ForeColor = System.Drawing.Color.White;
             this.titleLabel.Location = new System.Drawing.Point(3, 0);
             this.titleLabel.Name = "titleLabel";
-            this.titleLabel.Size = new System.Drawing.Size(74, 16);
+            this.titleLabel.Size = new System.Drawing.Size(84, 16);
             this.titleLabel.TabIndex = 0;
-            this.titleLabel.Text = "Inscription";
+            this.titleLabel.Text = "Registration";
             // 
-            // InscriptionForm
+            // RegistrationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -223,8 +223,8 @@
             this.ClientSize = new System.Drawing.Size(584, 326);
             this.Controls.Add(this.logoPanel);
             this.Controls.Add(this.connectionPanel);
-            this.Name = "InscriptionForm";
-            this.Text = "InscriptionForm";
+            this.Name = "RegistrationForm";
+            this.Text = "Registration";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.InscriptionForm_Load);
             this.connectionPanel.ResumeLayout(false);

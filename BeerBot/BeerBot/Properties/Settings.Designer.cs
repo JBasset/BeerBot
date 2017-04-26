@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace BeerBot.Properties
+namespace AleVisor.Properties
 {
 
 

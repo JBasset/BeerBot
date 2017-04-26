@@ -1,4 +1,4 @@
-﻿namespace BeerBot
+﻿namespace AleVisor
 {
     partial class ConnectionForm
     {
@@ -64,11 +64,11 @@
             // 
             this.errorLabel.AutoSize = true;
             this.errorLabel.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))));
-            this.errorLabel.Location = new System.Drawing.Point(9, 176);
+            this.errorLabel.Location = new System.Drawing.Point(9, 188);
             this.errorLabel.Name = "errorLabel";
-            this.errorLabel.Size = new System.Drawing.Size(250, 32);
+            this.errorLabel.Size = new System.Drawing.Size(226, 16);
             this.errorLabel.TabIndex = 7;
-            this.errorLabel.Text = "Le nom d\'utilisateur et le mot de passe ne\r\ncorrespondent pas";
+            this.errorLabel.Text = "User name and password don\'t match";
             this.errorLabel.Visible = false;
             // 
             // connexionButton
@@ -80,7 +80,7 @@
             this.connexionButton.Name = "connexionButton";
             this.connexionButton.Size = new System.Drawing.Size(104, 35);
             this.connexionButton.TabIndex = 6;
-            this.connexionButton.Text = "Me connecter";
+            this.connexionButton.Text = "Log in";
             this.connexionButton.UseVisualStyleBackColor = false;
             this.connexionButton.Click += new System.EventHandler(this.connexionButton_Click);
             // 
@@ -97,9 +97,9 @@
             this.passwordLabel.AutoSize = true;
             this.passwordLabel.Location = new System.Drawing.Point(9, 132);
             this.passwordLabel.Name = "passwordLabel";
-            this.passwordLabel.Size = new System.Drawing.Size(95, 16);
+            this.passwordLabel.Size = new System.Drawing.Size(73, 16);
             this.passwordLabel.TabIndex = 4;
-            this.passwordLabel.Text = "Mot de passe :";
+            this.passwordLabel.Text = "Password :";
             // 
             // usernameTextBox
             // 
@@ -113,9 +113,9 @@
             this.usernameLabel.AutoSize = true;
             this.usernameLabel.Location = new System.Drawing.Point(9, 70);
             this.usernameLabel.Name = "usernameLabel";
-            this.usernameLabel.Size = new System.Drawing.Size(112, 16);
+            this.usernameLabel.Size = new System.Drawing.Size(79, 16);
             this.usernameLabel.TabIndex = 2;
-            this.usernameLabel.Text = "Nom d\'utilisateur :";
+            this.usernameLabel.Text = "User name :";
             // 
             // inscriptionButton
             // 
@@ -126,7 +126,7 @@
             this.inscriptionButton.Name = "inscriptionButton";
             this.inscriptionButton.Size = new System.Drawing.Size(104, 49);
             this.inscriptionButton.TabIndex = 1;
-            this.inscriptionButton.Text = "Nouveau ? Inscrivez vous !";
+            this.inscriptionButton.Text = "New ?\r\nRegister now !";
             this.inscriptionButton.UseVisualStyleBackColor = false;
             this.inscriptionButton.Click += new System.EventHandler(this.inscriptionButton_Click);
             // 

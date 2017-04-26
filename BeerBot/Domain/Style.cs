@@ -22,5 +22,10 @@ namespace Domain
         {
             return "style" + id;
         }
+
+        public override string ToString()
+        {
+            return name;
+        }
     }
 }
