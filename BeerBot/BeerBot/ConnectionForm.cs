@@ -24,7 +24,7 @@ namespace AleVisor
         private void connexionButton_Click(object sender, EventArgs e)
         {
             bool passwordError = false;
-            foreach(User user in db.users)
+            foreach(User user in db.users) // if the username / password corresponds to an user in the database
             {
                 if (usernameTextBox.Text == user.name)
                 {
@@ -47,6 +47,7 @@ namespace AleVisor
             }
             else
             {
+                // if there is no error on the connection, we send the database and the logged user to the main form
                 (Owner as MainForm).database = db;
                 (Owner as MainForm).loggedUser = loggedUser;
                 Close();
@@ -54,6 +55,7 @@ namespace AleVisor
         }
 
         private void inscriptionButton_Click(object sender, EventArgs e)
+            // launches a registration form
         {
             RegistrationForm inscrForm = new RegistrationForm();
             AddOwnedForm(inscrForm);
@@ -63,6 +65,7 @@ namespace AleVisor
 
         private void InscriptionForm_Disposed(object sender, EventArgs e)
         {
+            // if an user is registrated when the registration form closes, we send it to the mainform and end the connection
             if (loggedUser != null)
             {
                 (Owner as MainForm).database = db;

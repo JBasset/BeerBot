@@ -72,10 +72,10 @@
             this.categoryTitleLabel = new System.Windows.Forms.Label();
             this.ratingButton = new System.Windows.Forms.Button();
             this.userRatingNumericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.anotherLabel = new System.Windows.Forms.Label();
             this.onFiveLabel2 = new System.Windows.Forms.Label();
             this.userRatingLabel = new System.Windows.Forms.Label();
             this.ratingTitleLabel = new System.Windows.Forms.Label();
-            this.anotherLabel = new System.Windows.Forms.Label();
             this.nextBeerButton = new System.Windows.Forms.Button();
             this.previousBeerButton = new System.Windows.Forms.Button();
             this.beerDescriptionPanel = new System.Windows.Forms.Panel();
@@ -576,10 +576,10 @@
             this.advicePanel.Controls.Add(this.categoryTitleLabel);
             this.advicePanel.Controls.Add(this.ratingButton);
             this.advicePanel.Controls.Add(this.userRatingNumericUpDown);
+            this.advicePanel.Controls.Add(this.anotherLabel);
             this.advicePanel.Controls.Add(this.onFiveLabel2);
             this.advicePanel.Controls.Add(this.userRatingLabel);
             this.advicePanel.Controls.Add(this.ratingTitleLabel);
-            this.advicePanel.Controls.Add(this.anotherLabel);
             this.advicePanel.Controls.Add(this.nextBeerButton);
             this.advicePanel.Controls.Add(this.previousBeerButton);
             this.advicePanel.Controls.Add(this.beerDescriptionPanel);
@@ -669,6 +669,15 @@
             this.userRatingNumericUpDown.TabIndex = 29;
             this.userRatingNumericUpDown.Visible = false;
             // 
+            // anotherLabel
+            // 
+            this.anotherLabel.Location = new System.Drawing.Point(244, 237);
+            this.anotherLabel.Name = "anotherLabel";
+            this.anotherLabel.Size = new System.Drawing.Size(75, 29);
+            this.anotherLabel.TabIndex = 20;
+            this.anotherLabel.Text = "0 / 0";
+            this.anotherLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // onFiveLabel2
             // 
             this.onFiveLabel2.AutoSize = true;
@@ -698,15 +707,6 @@
             this.ratingTitleLabel.Size = new System.Drawing.Size(85, 16);
             this.ratingTitleLabel.TabIndex = 26;
             this.ratingTitleLabel.Text = "Your rating :";
-            // 
-            // anotherLabel
-            // 
-            this.anotherLabel.AutoSize = true;
-            this.anotherLabel.Location = new System.Drawing.Point(251, 245);
-            this.anotherLabel.Name = "anotherLabel";
-            this.anotherLabel.Size = new System.Drawing.Size(60, 16);
-            this.anotherLabel.TabIndex = 20;
-            this.anotherLabel.Text = "Another !";
             // 
             // nextBeerButton
             // 

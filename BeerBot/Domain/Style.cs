@@ -20,7 +20,7 @@ namespace Domain
 
         private string getPrologName()
         {
-            return "style" + id;
+            return (id == -1) ? "unknownStyle" : "style" + id; // we need an unknown style, but the name style-1 isn't acceptable
         }
 
         public override string ToString()

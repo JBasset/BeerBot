@@ -1,9 +1,43 @@
-/* consulting the facts created from the database */
+/* ------------------------------------------ */	
+/* CONSULTING THE FACTS CREATED FROM THE DATABASE */
+/* ------------------------------------------ */
 :- consult("facts.pl").
 
+/*------------------------------------------*/
+/* CREATING THE DYNAMIC VARIABLES USED BY THE EXPERT SYSTEM */
+/*------------------------------------------*/
 :- dynamic score/2, thisUser/1, advKind/1, minRating/1, minAbv/1, maxAbv/1, minIbu/1, maxIbu/1, minSrm/1, maxSrm/1.
 
-/* predicates used to clean the settings of the previous advice */
+/*------------------------------------------*/
+/* PREDICATES USED TO READ AND WRITE IN A TXT FILE */
+/*------------------------------------------*/
+
+readFromFile(L) :-
+	open('CSToProlog.txt', read, File), % informations from the C# interface
+	reader(File,L),
+	close(File).
+
+reader(File,L) :-
+	read_line_to_codes(File, T),
+	(
+		T  = end_of_file -> L = [];
+		atom_codes(T1, T),
+		reader(File,L1), L = [T1 | L1]
+	).
+	
+writeToFile(L) :-
+	open('PrologToCS.txt', write, File), % informations sent to the C# interface
+	forall(inList(E,L),
+	(
+		write(File,E),
+		nl(File)
+	)),
+	close(File).
+
+/*------------------------------------------*/
+/* PREDICATE USED TO CLEAN THE SETTINGS OF THE PREVIOUS ADVICE */
+/*------------------------------------------*/
+
 cleanAdviceSettings :-
 	retractall(score(_,_)), retractall(thisUser(_)),
 	retractall(advKind(_)), retractall(minRating(_)),
@@ -11,7 +45,10 @@ cleanAdviceSettings :-
 	retractall(minIbu(_)), retractall(maxIbu(_)),
 	retractall(minSrm(_)), retractall(maxSrm(_)).
 
-/* predicates used to create the conditions of the advice */
+/*------------------------------------------*/
+/* PREDICATE USED TO CREATE THE CONDITIONS OF THE ADVICE */
+/*------------------------------------------*/
+
 setAdviceConditions :-
 	readFromFile(L),
 	forall(inList(E,L),
@@ -45,32 +82,10 @@ setAdviceConditions :-
 			not(maxSrm(_)), atom_number(E,X), assert(maxSrm(X)) 
 		)
 	)).
-	
 
-/* predicates used to read and write in a txt file */
-
-readFromFile(L) :-
-	open('CSToProlog.txt', read, File), % informations from the C# interface
-	reader(File,L),
-	close(File).
-
-reader(File,L) :-
-	read_line_to_codes(File, T),
-	(
-		T  = end_of_file -> L = [];
-		atom_codes(T1, T),
-		reader(File,L1), L = [T1 | L1]
-	).
-	
-writeToFile(L) :-
-	open('PrologToCS.txt', write, File), % informations sent to the C# interface
-	forall(inList(E,L),
-	(
-		write(File,E),
-		nl(File)
-	)),
-	close(File).
-
+/*------------------------------------------*/
+/* PREDICATES USED FOR BASIC MANIPULATION OF PROLOG OBJECTS IN THE APPLICATION */
+/*------------------------------------------*/
 
 /* sorting a list of beer in descending order of their average rating */
 maximumRating([],_,0).
@@ -120,6 +135,15 @@ sum([],0).
 sum([H|T],S) :-
 	sum(T,S1),
 	S is S1 + H.
+	
+/* distance between X and Y */
+dist(X,Y,Dist) :-
+	(X-Y >= 0, Dist is X-Y);
+	(Y-X > 0, Dist is Y-X).
+
+/*------------------------------------------*/
+/* PREDICATES USED FOR TREATMENT ON THE DATA FROM THE FACT.PL FILE */
+/*------------------------------------------*/
 
 /* Number of beers rated by the User in the style or category X */
 beersRated(U,X,N) :-
@@ -165,14 +189,34 @@ beerAverageRating(B,AR) :-
 	sum(L,S),
 	AR is S / Length.
 
-/* Predicates used to check if an information is significative and can be used in an advice predicate */	
+/* average rating a user gives to a list of beers (known to him) */
+arList(User,List,AR) :-
+	findall(R,(
+		inList(B,List),
+		rates(User,B,R)
+	),L),
+	length(L,Length),
+	Length > 0,
+	sum(L,Sum),
+	AR is Sum / Length.	
+
+/*------------------------------------------*/
+/* PREDICATES USED TO CHECK IF AN INFORMATION IS SIGNIFICATIVE AND CAN BE USED IN AN ADVICE PREDICATE */	
+/*------------------------------------------*/
 
 /* User likes significatively the category or style X : meaning he rated enough beers in X with a high enough average rating */
 likesSignificatively(U,X) :-
 	beersRated(U,X,N),
 	N > 4, % at least 5 beers must be rated in X
 	averageRating(U,X,AR),
-	AR > 3. % the average rating the user gives to beers in X is at least 3
+	AR >= 2.5. % the average rating the user gives to beers in X is at least 2.5
+	
+/* User dislikes significatively the category or style X */
+dislikesSignificatively(U,X) :-
+	beersRated(U,X,N),
+	N > 4, % at least 5 beers must be rated in X
+	averageRating(U,X,AR),
+	AR < 2.5. % the average rating the user gives to beers in X is at most 2.5
 
 /* Is the beer B known significatively, i.e. rated by enough people for the average rating to be trusted */
 beerRatingSignificance(B, Sig) :-
@@ -182,44 +226,16 @@ beerRatingSignificance(B, Sig) :-
 	((L < 10, Sig is L*0.1,!);(L >= 10, Sig is 1)).
 	% under 10 ratings, we can ponderate reating of a beer with its significance
 
-/* advice given on the users liked categories or styles */
-adviceOnKind(U,B) :-
-	(
-	findall(B1,
-	(
-		likesSignificatively(U,K),
-		beerCategory(B1,K),
-		not(rates(U,B1,_))
-	),L),
-	sortByRating(L,SL),
-	inList(B,SL)
-	).
-
-/* gives a list of all known enough beers in order of average ratings ; the higher the average rating the higher the beer in the list */
-/* this predicate will be used as a default predicates if not enough information are known on the user */
-adviceOnRating(U,B,R) :-
-	findall(B1,(significativelyKnownBeer(B1),beerAverageRating(B1,_),not(rates(U,B1,_))),L),
-	sortByRating(L,SL),
-	inList(B,SL),
-	beerAverageRating(B,R).
-
-/* increment a beer's score */
-incScore(Beer, Inc) :-
-	(
-		score(Beer,Score),
-		retract(score(Beer,Score)),
-		NScore is Score + Inc,
-		assert(score(Beer,NScore)),!
-	);
-	(
-		not(score(Beer,_)),
-		assert(score(Beer,Inc))
-	).
-
+/*------------------------------------------*/
+/* PREDICATE USED TO SET THE LIST OF BEER TO SORT FOR ADVICE FROM THE ADVICE CONDITIONS */
+/*------------------------------------------*/
+	
 setList(L) :-
 	findall(Beer,
 	(
 		beer(Beer),
+		thisUser(User),
+		not(rates(User,Beer,_)), % we don't advice beers the user already rated
 		(
 			advKind(Kind),
 			(
@@ -267,7 +283,12 @@ setList(L) :-
 		)
 	),L).
 	
+/*------------------------------------------*/
+/* MAIN PREDICATES OF THE APPLICATION : ADVICE PREDICATES */
+/*------------------------------------------*/	
+
 adviceFromCS :-
+	consult("facts.pl"), % the fact file can have been modified by the program since last execution
 	cleanAdviceSettings, % we need first to clean the previous advices
 	setAdviceConditions,
 	setList(L), % getting the beers corresponding the conditions
@@ -279,6 +300,10 @@ advice(User,LB,AdvicedLB) :-
 	generateScores(User,LB),
 	sortedScores(AdvicedLB).
 
+/*------------------------------------------*/
+/* PREDICATE USED TO SET SCORES OF A LIST OF BEERS */
+/*------------------------------------------*/	
+	
 generateScores(User,LB) :-
 	forall(inList(Beer,LB),% we increment the score of the beer
 	(
@@ -290,39 +315,74 @@ generateScores(User,LB) :-
 		(srmScore(User,Beer);true),
 		(ageScore(User,Beer);true)
 	)).
+
+/*------------------------------------------*/	
+/* PREDICATES USED TO CALCULATE A BEER'S SCORE */
+/*------------------------------------------*/	
 	
-/* predicates used to calculate a beers score */
-	
+/* increment a beer's score */
+incScore(Beer, Inc) :-
+	(
+		score(Beer,Score),
+		retract(score(Beer,Score)),
+		NScore is Score + Inc,
+		assert(score(Beer,NScore)),!
+	);
+	(
+		not(score(Beer,_)),
+		assert(score(Beer,Inc))
+	).	
+
+/* we increment the score if the beer is in a category or style the user likes, and decrement it if the beer is in a category or style the user dislikes */
 kindScore(User,Beer) :-
 	(
-		(beerCategory(Beer,Cat), likesSignificatively(User,Cat));
-		(beerStyle(Beer,Sty), likesSignificatively(User,Sty))
-	),
-	incScore(Beer,1).
+		(
+			(
+				beerCategory(Beer,Cat),
+				likesSignificatively(User,Cat),
+				averageRating(User,Cat,Ar)
+			); % no '!' ; if the beer is of a category AND a style the user likes, we increment twice (same for decrement)
+			(
+				beerStyle(Beer,Sty),
+				likesSignificatively(User,Sty),
+				averageRating(User,Sty,Ar)
+			)
+		),
+		Inc is Ar / 5,
+		incScore(Beer,Inc)
+	);
+	(
+		(
+			(
+				beerCategory(Beer,Cat),
+				dislikesSignificatively(User,Cat),
+				averageRating(User,Cat,Ar)
+			);
+			(
+				beerStyle(Beer,Sty),
+				dislikesSignificatively(User,Sty),
+				averageRating(User,Sty,Ar)
+			)
+		),
+		Inc is -((5 - Ar) / 5),
+		incScore(Beer,Inc)
+	).
 	
+/* we increment the score if the beer is well rated in average, and decrement it if the beer is badly rated in average */
 ratingScore(Beer) :-
 	beerAverageRating(Beer,Ar),
-	beerRatingSignificance(Beer,Sig),
-	Inc is (Sig * Ar) / 2,
+	beerRatingSignificance(Beer,Sig), % we ponderate the result by the significance of the average rating of the beer : a beer with only a few ratings will have a less decisive ratingScore
+	((
+		Ar >= 2.5,
+		Inc is (Sig * Ar) / 2
+	);
+	(
+		Ar < 2.5,
+		Inc is -(Sig * (5 - Ar)) / 2
+	)),
 	incScore(Beer,Inc).
-
-/* distance between X and Y */
-dist(X,Y,Dist) :-
-	(X-Y >= 0, Dist is X-Y);
-	(Y-X > 0, Dist is Y-X).
-
-/* average rating a user gives to a list of beers (known to him) */
-arList(User,List,AR) :-
-	findall(R,(
-		inList(B,List),
-		rates(User,B,R)
-	),L),
-	length(L,Length),
-	Length > 0,
-	sum(L,Sum),
-	AR is Sum / Length.
 	
-/* the score increases if the user likes beers with a close ABV*/
+/* the score increases if the user likes beers with a close ABV, and decreases if the user dislikes beers with a close ABV */
 abvScore(User,Beer) :-
 	abv(Beer,ThisAbv),
 	listRatedBeers(User,L),
@@ -334,13 +394,19 @@ abvScore(User,Beer) :-
 		Range is ThisAbv / 5,
 		Dist < Range
 	),AbvList),
-	length(AbvList,Length),
 	arList(User,AbvList,AR),
-	AR > 2.5, % if the average rating is too low, we don't want to advice that
-	Inc is (AR / 10) * Length,
-	incScore(Beer,Inc).
+	((
+		AR >= 2.5,
+		Inc is AR / 5,
+		incScore(Beer,Inc)
+	);
+	(
+		AR < 2.5,
+		Inc is -((5 - AR) / 5),
+		incScore(Beer,Inc)
+	)).
 	
-/* the score increases if the user likes beers with a close IBU*/
+/* the score increases if the user likes beers with a close IBU */
 ibuScore(User,Beer) :-
 	ibu(Beer,ThisIbu),
 	listRatedBeers(User,L),
@@ -352,13 +418,19 @@ ibuScore(User,Beer) :-
 		Range is ThisIbu / 5,
 		Dist < Range
 	),IbuList),
-	length(IbuList,Length),
 	arList(User,IbuList,AR),
-	AR > 2.5, % if the average rating is too low, we don't want to advice that
-	Inc is (AR / 10) * Length,
-	incScore(Beer,Inc).
+	((
+		AR >= 2.5,
+		Inc is AR / 5,
+		incScore(Beer,Inc)
+	);
+	(
+		AR < 2.5,
+		Inc is -((5 - AR) / 5),
+		incScore(Beer,Inc)
+	)).
 	
-/* the score increases if the user likes beers with a close SRM*/
+/* the score increases if the user likes beers with a close SRM */
 srmScore(User,Beer) :-
 	srm(Beer,ThisSrm),
 	listRatedBeers(User,L),
@@ -370,30 +442,43 @@ srmScore(User,Beer) :-
 		Range is ThisSrm / 5,
 		Dist < Range
 	),SrmList),
-	length(SrmList,Length),
 	arList(User,SrmList,AR),
-	AR > 2.5, % if the average rating is too low, we don't want to advice that
-	Inc is (AR / 10) * Length,
-	incScore(Beer,Inc).
+	((
+		AR >= 2.5,
+		Inc is AR / 5,
+		incScore(Beer,Inc)
+	);
+	(
+		AR < 2.5,
+		Inc is -((5 - AR) / 5),
+		incScore(Beer,Inc)
+	)).
 	
+/* we increment the score if the beer is liked in average by user of the same generation than the user (+/- 3 years) */
 ageScore(User,Beer) :-
 	birthDate(User,ThisBD),
 	findall(U,(
 		user(U),
+		U \== User,
 		birthDate(U,BD),
 		dist(ThisBD,BD,Dist),
 		Dist < 3
-	),L),
+	),L), % we look for all user at +/- 3 years from the actual user
 	findall(R,(
 		inList(U,L),
 		rates(U,Beer,R)
-	),ARL),
+	),ARL), % we get all the ratings these users give to 'Beer'
 	length(ARL,Length),
-	Length > 0,
+	Length > 4, % if less than 5 users rated the beer, the result is considered not significative enough and we don't change the score
 	sum(ARL,Sum),
-	AR is Sum / Length,
+	AR is Sum / Length, % We get the average rating of these ratings
+	((
+		AR >= 2.5,
+		Inc is AR / 5,
+		incScore(Beer,Inc)
+	);
 	(
-		(Length < 10, Inc is (AR / 5) * (Length / 10));
-		(Length >= 10, Inc is AR)
-	),
-	incScore(Beer,Inc).
+		AR < 2.5,
+		Inc is -((5 - AR) / 5),
+		incScore(Beer,Inc)
+	)).

@@ -11,9 +11,10 @@ namespace Domain
     public class OpenBeerDB
         // Manipulations of the database will use this class
     {
-        private string mySqlConnectionString = "SERVER=127.0.0.1; DATABASE=openbeerdb; UID=root; PASSWORD=";
+        private string mySqlConnectionString = "SERVER=127.0.0.1; DATABASE=openbeerdb; UID=root; PASSWORD="; // the connection string to the database
         private MySqlConnection connection;
 
+        // lists of items in the database ; these list are created at the initialisation of the application to avoid having to fetch informations in the database after
         public List<User> users { get; private set; }
         public List<Beer> beers { get; private set; }
         public List<Category> categories { get; private set; }
@@ -22,24 +23,26 @@ namespace Domain
         public OpenBeerDB()
         {
             connection = new MySqlConnection(mySqlConnectionString);
-            generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
+            // setting the lists of items
             ratings = getRatings();
             users = getUsers();
             categories = getCategories();
             beers = getBeers();
+            generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
         }
 
         public void UpdateDatabase()
             // to call when data is added / deleted, to keep the application up to date with it's data
         {
-            generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
             ratings = getRatings();
             users = getUsers();
             categories = getCategories();
             beers = getBeers();
+            generateFactFile(); // creating the file "facts.pl", countaining all the facts from the database in their prolog form
         }
 
         public User UpdateUser(int userId)
+            // this function will be used when the database is updated, to get the new informations on the logged user if it's necessary
         {
             foreach (User user in users)
             {
@@ -50,15 +53,18 @@ namespace Domain
         }
 
         private List<User> getUsers()
+            // getting all users in the database
         {
+            // getting all the users attributes from the database
             List<string[]> usersAttributes = Select(new string[] { "id", "name", "password", "birth_year", "gender", "admin" }, "users");
             List<User> users = new List<User> { };
-            foreach(string[] userAttributes in usersAttributes)
+            foreach(string[] userAttributes in usersAttributes) // for each attributes, we create a user
             {
+                // getting all ratings from the user
                 List<double[]> userRatings = new List<double[]> { };
                 foreach (double[] rating in ratings)
                 {
-                    if (rating[0] == int.Parse(userAttributes[0]))
+                    if (rating[0] == int.Parse(userAttributes[0])) // if the user at the origin of this rating correspond to the user in userAttributes
                     {
                         userRatings.Add(new double[] { rating[1], rating[2] });
                     }
@@ -70,29 +76,31 @@ namespace Domain
                     int.Parse(userAttributes[3]),
                     bool.Parse(userAttributes[4]),
                     userRatings,
-                    bool.Parse(userAttributes[5])));
+                    bool.Parse(userAttributes[5]))); // adding the user to the list of users
             }
             return users;
         }
 
         private List<Beer> getBeers()
+            // getting all beers in the database
         {
+            // getting all the beers attributes in the database
             List<string[]> beersAttributes = Select(new string[]
             {
                 "id", "name", "cat_id", "style_id", "abv", "ibu", "srm", "descript"
             }, "beers");
             List<Beer> beers = new List<Beer> { };
-            foreach (string[] beerAttributes in beersAttributes)
+            foreach (string[] beerAttributes in beersAttributes) // for each attributes, we create a beer
             {
                 if (int.Parse(beerAttributes[0]) != -1) // if the beer isn't the default beer
                 {
                     Style sty = new Style("Unknown Style", -1);
                     Category cat = new Category("Unknown Category", -1, new List<Style> { sty });
-                    foreach (Category category in categories)
+                    foreach (Category category in categories) // we search for the category of the beer
                     {
                         if (int.Parse(beerAttributes[2]) == category.id)
                             cat = category;
-                        foreach (Style style in category.styles)
+                        foreach (Style style in category.styles) // we search for the style of the beer
                         {
                             if (int.Parse(beerAttributes[3]) == style.id)
                                 sty = style;
@@ -108,46 +116,51 @@ namespace Domain
                         double.Parse(beerAttributes[4]),
                         double.Parse(beerAttributes[5]),
                         double.Parse(beerAttributes[6])
-                        ));
+                        )); // adding the beer to the list of beers
                 }
             }
             return beers;
         }
 
         private List<Category> getCategories()
+            // function used to get all categories from the database
         {
+            // getting all categories attributes from the database
             List<string[]> categoriesAttributes = Select(new string[]
             {
                 "id", "cat_name"
             }, "categories");
             List<Category> categories = new List<Category> { };
-            foreach (string[] categoryAttributes in categoriesAttributes)
+            foreach (string[] categoryAttributes in categoriesAttributes) // for each attributes we create a category
             {
                 #region getting styles in this category
+                // getting all styles attributes from the database
                 List<string[]> stylesAttributes = Select(new string[]
                 {
                     "id", "cat_id", "style_name"
                 }, "styles");
                 List<Style> styles = new List<Style> { };
-                foreach (string[] styleAttributes in stylesAttributes)
+                foreach (string[] styleAttributes in stylesAttributes) // for each attributes we create a style
                 {
-                    if (int.Parse(styleAttributes[1]) == int.Parse(categoryAttributes[0]))
-                        styles.Add(new Style(styleAttributes[2], int.Parse(styleAttributes[0])));
+                    if (int.Parse(styleAttributes[1]) == int.Parse(categoryAttributes[0])) // if the style is part of the category we are working on
+                        styles.Add(new Style(styleAttributes[2], int.Parse(styleAttributes[0]))); // we add it to the category's list of styles
                 }
                 #endregion
-                categories.Add(new Category(categoryAttributes[1], int.Parse(categoryAttributes[0]), styles));
+                categories.Add(new Category(categoryAttributes[1], int.Parse(categoryAttributes[0]), styles)); // we add the category to the list of categories
             }
             return categories;
         }
 
         private List<double[]> getRatings()
+            // getting all ratings from the database
         {
+            // getting ratings attributes from the database
             List<string[]> ratingsAttributes = Select(new string[]
             {
                 "user_id", "beer_id", "rating"
             }, "ratings");
             List<double[]> ratings = new List<double[]> { };
-            foreach (string[] ratingAttributes in ratingsAttributes)
+            foreach (string[] ratingAttributes in ratingsAttributes) //for each attributes we create a rating array
             {
                 ratings.Add(new double[3]
                 {
@@ -160,14 +173,17 @@ namespace Domain
         }
 
         public List<Request> getRequests()
+            // getting all requests from the database
         {
+            // getting all the requests attributes : they are almost the same as the beers attributes
             List<string[]> requestsAttributes = Select(new string[]
             {
                 "id", "beer_id", "name", "cat_id", "style_id", "abv", "ibu", "srm", "descript"
             }, "requests");
             List<Request> requests = new List<Request> { };
-            foreach (string[] requestAttributes in requestsAttributes)
+            foreach (string[] requestAttributes in requestsAttributes) // for each request attribute we create a request
             {
+                #region getting the style and the category of the request
                 Style sty = new Style("Unknown Style", -1);
                 Category cat = new Category("Unknown Category", -1, new List<Style> { sty });
                 foreach (Category category in categories)
@@ -180,6 +196,7 @@ namespace Domain
                             sty = style;
                     }
                 }
+                #endregion
 
                 requests.Add(new Request(
                     int.Parse(requestAttributes[0]),
@@ -191,12 +208,13 @@ namespace Domain
                     double.Parse(requestAttributes[5]),
                     double.Parse(requestAttributes[6]),
                     double.Parse(requestAttributes[7])
-                    ));
+                    )); // we add the request to the list of requests
             }
             return requests;
         }
 
         public void AddUser(string name, string password, string gender, string birthYear)
+            // used when a new user is registrated ; enters the user's attributes in the database, and updates the list of users
         {
             string[] rows = new string[] { "name", "password", "gender", "birth_year" };
             string[] values = new string[] { name, password, gender, birthYear };
@@ -205,8 +223,9 @@ namespace Domain
         }
 
         private void generateFactFile()
+            // this function creates the file 'facts.pl', containing all informations needed by the expert system translated in Prolog facts
         {
-            List<string> lines = new List<string> { };
+            List<string> lines = new List<string> { }; // all the lines contained in the file
 
             // first comment on top of the file
             lines.Add("%this file is automatically generated from the main program. It musn't be changed in any way, since changes will be erased by the program");
@@ -218,26 +237,24 @@ namespace Domain
             a prolog element, since the names in the database often contain unallowed characters in prolog
             */
 
+            // all clauses of a fact must be together in the source file, hence the successive foreach loops when one should have been enough
+
             #region getting all beers
-            List<string[]> beers = Select(new string[] { "id" }, "beers");
-            foreach (string[] beer in beers)
+            foreach (Beer beer in beers)
             {
-                if (int.Parse(beer[0]) != -1) // if it isn't the default beer
+                if (beer.id != -1) // if it isn't the default beer
                 {
-                    string prologName = "beer" + beer[0];
-                    lines.Add("beer(" + prologName + ").");
+                    lines.Add("beer(" + beer.prologName + ").");
                 }
             }
             #endregion
             
             #region getting all categories
-            List<string[]> categories = Select(new string[] { "id" }, "categories");
-            foreach (string[] category in categories)
+            foreach (Category category in categories)
             {
-                if (int.Parse(category[0]) != -1)
+                if (category.id != -1) // if it isn't the unknown category
                 {
-                    string prologName = "category" + category[0];
-                    lines.Add("category(" + prologName + ").");
+                    lines.Add("category(" + category.prologName + ").");
                 }
                 else
                     lines.Add("category(unknownCategory)."); // We need an unknown category, but the name "category-1" isn't acceptable
@@ -245,10 +262,11 @@ namespace Domain
             #endregion
 
             #region getting all styles
-            List<string[]> styles = Select(new string[] { "id" }, "styles"); ;
+            // for the styles it is easier to fetch them in the database, since there isn't a list of all the styles, but just lists of styles in a category
+            List<string[]> styles = Select(new string[] { "id" }, "styles");
             foreach (string[] style in styles)
             {
-                if (int.Parse(style[0]) != -1)
+                if (int.Parse(style[0]) != -1) // if it isn't the unknown style
                 {
                     string prologName = "style" + style[0];
                     lines.Add("style(" + prologName + ").");
@@ -259,88 +277,71 @@ namespace Domain
             #endregion
 
             #region getting all abv (alcohol by volume)
-            List<string[]> abvs = Select(new string[] { "id", "abv" }, "beers");
-            foreach (string[] abv in abvs)
+            foreach (Beer beer in beers)
             {
-                if (int.Parse(abv[0]) != -1) // if it isn't the default beer
+                if (beer.id != -1) // if it isn't the default beer
                 {
-                    if (double.Parse(abv[1]) == 0) // we set the abv at -1 if it is unknown
-                        abv[1] = "-1";
-                    lines.Add("abv(beer" + abv[0] + "," + abv[1].Replace(',', '.') + ")."); // decimals should be separated with a dot, not a comma
+                    string abv = (beer.abv == 0) ? "-1" :  "" + beer.abv; // we set the abv at -1 if it is unknown
+                    lines.Add("abv(" + beer.prologName + "," + abv.Replace(',', '.') + ")."); // decimals are separated with a dot in prolog, not a comma
                 }
             }
             #endregion
 
             #region getting all ibu (internationnal bitterness unit)
-            List<string[]> ibus = Select(new string[] { "id", "ibu" }, "beers");
-            foreach (string[] ibu in ibus)
+            foreach (Beer beer in beers)
             {
-                if (int.Parse(ibu[0]) != -1) // if it isn't the default beer
+                if (beer.id != -1) // if it isn't the default beer
                 {
-                    if (double.Parse(ibu[1]) == 0) // we set the ibu at -1 if it is unknown
-                        ibu[1] = "-1";
-                    lines.Add("ibu(beer" + ibu[0] + "," + ibu[1].Replace(',', '.') + ")."); // decimals should be separated with a dot, not a comma
+                    string ibu = (beer.ibu == 0) ? "-1" : "" + beer.ibu; // we set the ibu at -1 if it is unknown
+                    lines.Add("ibu(" + beer.prologName + "," + ibu.Replace(',', '.') + ")."); // decimals should be separated with a dot, not a comma
                 }
             }
             #endregion
 
             #region getting all srm (standard reference method)
-            List<string[]> srms = Select(new string[] { "id", "srm" }, "beers");
-            foreach (string[] srm in srms)
+            foreach (Beer beer in beers)
             {
-                if (int.Parse(srm[0]) != -1) // if it isn't the default beer
+                if (beer.id != -1) // if it isn't the default beer
                 {
-                    if (double.Parse(srm[1]) == 0) // we set the srm at -1 if it is unknown
-                        srm[1] = "-1";
-                    lines.Add("srm(beer" + srm[0] + "," + srm[1].Replace(',', '.') + ")."); // decimals should be separated with a dot, not a comma
+                    string srm = (beer.srm == 0) ? "-1" : "" + beer.srm; // we set the srm at -1 if it is unknown
+                    lines.Add("srm(" + beer.prologName + "," + srm.Replace(',', '.') + ")."); // decimals should be separated with a dot, not a comma
                 }
             }
             #endregion
 
             #region getting all beers categories
-            List<string[]> beersCat = Select(new string[] { "id", "cat_id" }, "beers");
-            foreach (string[] beerCat in beersCat)
+            foreach (Beer beer in beers)
             {
-                if (int.Parse(beerCat[0]) != -1) // if it isn't the default beer
+                if (beer.id != -1) // if it isn't the default beer
                 {
-                    string beerPrologName = "beer" + beerCat[0];
-                    string catPrologName;
-                    if (int.Parse(beerCat[1]) != -1)
-                        catPrologName = "category" + beerCat[1];
-                    else
-                        catPrologName = "unknownCategory";
-                    lines.Add("beerCategory(" + beerPrologName + "," + catPrologName + ").");
+                    lines.Add("beerCategory(" + beer.prologName + "," + beer.category.prologName + ").");
                 }
             }
             #endregion
 
             #region getting all beers styles
-            List<string[]> beersSty = Select(new string[] { "id", "style_id" }, "beers");
-            foreach (string[] beerSty in beersSty)
+            foreach (Beer beer in beers)
             {
-                if (int.Parse(beerSty[0]) != -1) // if it isn't the default beer
+                if (beer.id != -1) // if it isn't the default beer
                 {
-                    string beerPrologName = "beer" + beerSty[0];
-                    string styPrologName;
-                    if (int.Parse(beerSty[1]) != -1)
-                        styPrologName = "style" + beerSty[1];
-                    else
-                        styPrologName = "unknownStyle";
-                    lines.Add("beerStyle(" + beerPrologName + "," + styPrologName + ").");
+                    lines.Add("beerStyle(" + beer.prologName + "," + beer.style.prologName + ").");
                 }
             }
             #endregion
 
             #region getting all styles categories
+            // for the styles it is easier to fetch them in the database, since there isn't a list of all the styles, but just lists of styles in a category
             List<string[]> stylesCat = Select(new string[] { "id", "cat_id" }, "styles");
             foreach (string[] styleCat in stylesCat)
             {
+                // getting the prolog name of the style
                 string stylePrologName;
                 if (int.Parse(styleCat[0]) != -1)
                     stylePrologName = "style" + styleCat[0];
                 else
                     stylePrologName = "unknownStyle";
 
+                // getting the prolog name of the category
                 string catPrologName;
                 if (int.Parse(styleCat[1]) != -1)
                     catPrologName = "category" + styleCat[1];
@@ -352,59 +353,56 @@ namespace Domain
             #endregion
 
             #region getting all users
-            List<string[]> users = Select(new string[] { "id" }, "users");
-            foreach (string[] user in users)
+            foreach (User user in users)
             {
-                string prologName = "user" + user[0];
-                lines.Add("user(" + prologName + ").");
+                lines.Add("user(" + user.getPrologName() + ").");
             }
             #endregion
 
             #region getting all users birth years
-            List<string[]> bys = Select(new string[] { "id", "birth_year" }, "users");
-            foreach (string[] by in bys)
+            foreach (User user in users)
             {
-                string prologName = "user" + by[0];
-                lines.Add("birthDate(" + prologName + "," + by[1] + ").");
+                lines.Add("birthDate(" + user.getPrologName() + "," + user.birthYear + ").");
             }
             #endregion
 
             #region getting all users genders
-            List<string[]> genders = Select(new string[] { "id", "gender" }, "users");
-            foreach (string[] gender in genders)
+            foreach (User user in users)
             {
-                string prologName = "user" + gender[0];
-                string stringGender = (bool.Parse(gender[1])) ? "woman" : "man";
-                lines.Add("gender(" + prologName + "," + stringGender + ").");
+                lines.Add("gender(" + user.getPrologName() + "," + (user.gender ? "woman" : "man") + ").");
             }
             #endregion
 
             #region getting all users ratings
-            List<string[]> ratings = Select(new string[] { "user_id", "beer_id", "rating" }, "ratings");
-            foreach (string[] rating in ratings)
+            foreach (User user in users)
             {
-                string userPlName = "user" + rating[0];
-                string beerPlName = "beer" + rating[1];
-                lines.Add("rates(" + userPlName + "," + beerPlName + "," + rating[2].Replace(',','.') + ").");
+                foreach (double[] rating in user.ratings)
+                {
+                    string r = ("" + rating[1]).Replace(',', '.'); // the decimal separator in prolog is a dot, not a comma
+                    lines.Add("rates(" + user.getPrologName() + ",beer" + rating[0] + "," + r + ").");
+                }
             }
             #endregion
             
             #endregion
 
+            // creating the fact.pl file
             using (StreamWriter outputFile = new StreamWriter("..\\..\\..\\PrologEngine\\facts.pl"))
             {
-                foreach (string line in lines)
+                foreach (string line in lines) // we write all the lines in the file
                 {
                     outputFile.WriteLine(line);
                 }
             }
         }
 
-        #region getting information from the database
+        #region SQL like functions
         public List<string[]> Select(string[] rows, string table)
+            // return the list of string array corresponding to the SQL command "SELECT rows FROM table"
         {
-            connection.Open();
+            connection.Open(); // we open connected to the database
 
+            // we create the query from the rows and the table given in argument
             string query = "SELECT ";
             foreach (string row in rows)
                 query += row + ", ";
@@ -416,27 +414,29 @@ namespace Domain
 
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = query;
+            MySqlDataReader reader = cmd.ExecuteReader(); // we execute the query
 
-            MySqlDataReader reader = cmd.ExecuteReader();
-
-            while (reader.Read())
+            while (reader.Read()) // foreach line in the query's result
             {
                 string[] thisRow = new string[rows.Length];
                 for (int i = 0; i < rows.Length; i++)
                 {
                     thisRow[i] = reader.GetString(rows[i]);
                 }
-                results.Add(thisRow);
+                results.Add(thisRow); // we add a row to the results
             }
 
+            //closing the connection to the database and returning the results
             connection.Close();
             return results;
         }
 
         public void Insert(string table, string[] rows, string[] values)
+            // execute the SQL command "INSERT INTO table (rows) VALUES (values)"
         {
-            connection.Open();
+            connection.Open(); // we open the connection with the database
 
+            // creating the query
             string query = "INSERT INTO " + table + " (";
             foreach (string row in rows)
                 query += row + ", ";
@@ -460,15 +460,18 @@ namespace Domain
             query = query.Substring(0, query.Length - 2); // suppressing the last ", "
             query += ")";
 
+            //executing the query
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = query;
             cmd.ExecuteNonQuery();
 
-            connection.Close();
+            connection.Close(); // closing the connection
         }
 
         public void Update(string table, string[] rows, string[] values, int id)
+            // execute the SQL command "UPDATE table SET rows=values WHERE `id` = id"
         {
+            //creating the query
             string query = "UPDATE `beers` SET ";
             for (int i = 0; i < rows.Length; i++)
             {
@@ -487,23 +490,25 @@ namespace Domain
             query = query.Substring(0, query.Length - 2); // suppressing the last ", "
             query += "WHERE `id` = " + id;
 
-            connection.Open();
+            connection.Open(); // opening the connection with the database
 
+            // executing the query
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = query;
             cmd.ExecuteNonQuery();
 
-            connection.Close();
+            connection.Close(); // closing the connection
         }
-        #endregion
 
         public void Execute(string query)
+            // execute the SQL command query
         {
-            connection.Open();
+            connection.Open(); // opening the connection to the database
             MySqlCommand cmd = connection.CreateCommand();
             cmd.CommandText = query;
-            cmd.ExecuteNonQuery();
-            connection.Close();
+            cmd.ExecuteNonQuery(); // executing the query
+            connection.Close(); // closing the connection to the database
         }
+        #endregion
     }
 }

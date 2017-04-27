@@ -5393,6 +5393,7 @@ beer(beer5398).
 beer(beer5399).
 beer(beer5400).
 beer(beer5401).
+beer(beer5897).
 beer(beer5403).
 beer(beer5404).
 beer(beer5405).
@@ -5882,7 +5883,6 @@ beer(beer5893).
 beer(beer5894).
 beer(beer5895).
 beer(beer5896).
-beer(beer5897).
 beer(beer5898).
 beer(beer5899).
 beer(beer5900).
@@ -5901,7 +5901,6 @@ beer(beer5912).
 beer(beer5913).
 beer(beer5914).
 beer(beer5918).
-category(unknownCategory).
 category(category1).
 category(category2).
 category(category3).
@@ -5913,6 +5912,7 @@ category(category8).
 category(category9).
 category(category10).
 category(category11).
+category(unknownCategory).
 style(unknownStyle).
 style(style1).
 style(style2).
@@ -35740,12 +35740,14 @@ rates(user1,beer4253,3).
 rates(user1,beer4339,1.5).
 rates(user1,beer4365,3.5).
 rates(user1,beer4375,4).
+rates(user1,beer4410,2).
 rates(user1,beer5119,4.5).
 rates(user1,beer5221,4).
 rates(user1,beer5232,4.5).
 rates(user1,beer5313,3.5).
 rates(user1,beer5848,3.25).
 rates(user1,beer5886,3.75).
+rates(user1,beer5918,5).
 rates(user2,beer338,4.5).
 rates(user2,beer2222,4.5).
 rates(user3,beer338,4).

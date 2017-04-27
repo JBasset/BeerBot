@@ -60,7 +60,7 @@ namespace AleVisor
                 DialogResult msgBox = MessageBox.Show(msg, caption, button);
                 Close();
             }
-            else
+            else // we initialize the form
             {
                 userNameLabel.Text = loggedUser.name;
                 userNameLabel.Visible = true;
@@ -82,6 +82,7 @@ namespace AleVisor
         }
 
         private void logOffButton_Click(object sender, EventArgs e)
+            // allows the user to change profile without closing the application
         {
             loggedUser = null;
             userNameLabel.Visible = false;
@@ -89,12 +90,14 @@ namespace AleVisor
             ConnectionForm connectionForm = new ConnectionForm();
             AddOwnedForm(connectionForm);
             connectionForm.Show();
-            connectionForm.Disposed += ConnectionForm_Disposed;
+            connectionForm.Disposed += ConnectionForm_Disposed; // when the new connection form closes, the same verifications must be made
         }
 
         private void beerAdviceButton_Click(object sender, EventArgs e)
+            // write the conditions of the advice to a text file
         {
             #region setting the conditions
+            // for all conditions, the default value is "-1" : if the condition is equal to "-1", it won't be taken in account in the Expert System
             string user = loggedUser.getPrologName();
 
             string kind = "-1";
@@ -104,7 +107,7 @@ namespace AleVisor
                 kind = (categoryComboBox.SelectedItem as Category).prologName;
 
             string minRating = (minRatingNumericUpDown.Value == 0) ? "-1" : "" + minRatingNumericUpDown.Value;
-            minRating = minRating.Replace(',', '.'); // in Prolog, double are written with a . and not a , (C# : 4,0 ; Prolog : 4.0)
+            minRating = minRating.Replace(',', '.'); // in Prolog, double are written with a . and not a , ( e.g. : C# : 4,0 ; Prolog : 4.0)
 
             string minAbv = (minAbvCheckBox.Checked) ? "" + minAbvNumericUpDown.Value : "-1";
             minAbv = minAbv.Replace(',', '.');
@@ -129,7 +132,7 @@ namespace AleVisor
                 beerNameLabel.Text = "Searching...";
                 beerNameLabel.Visible = true;
             }
-            else
+            else // if the program couldn't write the conditions to the text file
             {
                 loadingLabel.Text = "There has been a problem.";
                 loadingLabel.Visible = true;
@@ -137,10 +140,11 @@ namespace AleVisor
         }
 
         private void answerLoadButton_Click(object sender, EventArgs e)
+            // load the result of the advice from the text file
         {
-            results = engine.GetAdviceResults();
+            results = engine.GetAdviceResults(); // read the result
             resultIndex = 0;
-            if (results.Count == 0)
+            if (results.Count == 0) // if the result is empty
             {
                 beerDescriptionLabel.Text = "No beers found. Make your conditions less restrictive to improve the qualtity of the advice";
                 beerDescriptionLabel.Visible = true;
@@ -152,11 +156,15 @@ namespace AleVisor
                 resultSrmValueLabel.Visible = false;
             }
             else
+            {
                 showAdvicedBeer();
+                anotherLabel.Text = (resultIndex+1) + " / " + results.Count;
+            }
             loadingLabel.Visible = false;
         }
 
         private void showAdvicedBeer()
+            // showing the beer results[resultIndex]
         {
             beerNameLabel.Text = results[resultIndex].name;
             beerDescriptionLabel.Text = (results[resultIndex].description == "") ? "No description provided." : results[resultIndex].description;
@@ -182,7 +190,7 @@ namespace AleVisor
             rated = false;
             foreach (double[] rating in loggedUser.ratings)
             {
-                if (rating[0] == results[resultIndex].id)
+                if (rating[0] == results[resultIndex].id) // if we find the rating of the user for this beer
                 {
                     rated = true;
                     userRatingLabel.Text = "" + rating[1];
@@ -193,7 +201,7 @@ namespace AleVisor
                     break;
                 }
             }
-            if (!rated)
+            if (!rated) // if the user has not rated this beer
             {
                 userRatingLabel.Visible = false;
                 userRatingNumericUpDown.Visible = true;
@@ -201,11 +209,13 @@ namespace AleVisor
                 ratingButton.Visible = true;
             }
 
+            // we set the possibilities of navigation
             previousBeerButton.Enabled = resultIndex > 0;
             nextBeerButton.Enabled = resultIndex < results.Count - 1;
         }
 
         private void categoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
+            // loading the possible styles from the selected category
         {
             if (categoryComboBox.SelectedItem.ToString() != "Any")
             {
@@ -215,7 +225,7 @@ namespace AleVisor
                 styleComboBox.SelectedItem = "Any";
                 Category cat = (categoryComboBox.SelectedItem as Category); // the control being read-only, there can only be a category selected
                 foreach (Style style in cat.styles)
-                    styleComboBox.Items.Add(style);
+                    styleComboBox.Items.Add(style); // load all the category's styles
             }
             else
             {
@@ -226,6 +236,9 @@ namespace AleVisor
         }
 
         #region checkboxes
+        // shows a red cross if the condition is not taken in account, and a green validation symbol if it is
+        // also resets the extremas
+
         private void minAbvCheckBox_CheckedChanged(object sender, EventArgs e)
         {
             if (minAbvCheckBox.Checked)
@@ -387,6 +400,7 @@ namespace AleVisor
         #endregion
 
         private void helpConditionButton_Click(object sender, EventArgs e)
+            // shows an help form to explain the vocabrewlary
         {
             helpForm helpForm = new helpForm();
             helpForm.Disposed += helpForm_Disposed;
@@ -400,20 +414,25 @@ namespace AleVisor
         }
 
         private void previousBeerButton_Click(object sender, EventArgs e)
+            // decrement the result index and shows the corresponding beer
         {
             resultIndex--;
             userRatingNumericUpDown.Value = 0;
             showAdvicedBeer();
+            anotherLabel.Text = (resultIndex+1) + " / " + results.Count;
         }
 
         private void nextBeerButton_Click(object sender, EventArgs e)
+            // increment the result index and shows the corresponding beer
         {
             resultIndex++;
             userRatingNumericUpDown.Value = 0;
             showAdvicedBeer();
+            anotherLabel.Text = (resultIndex+1) + " / " + results.Count;
         }
 
         private void beerSearchButton_Click(object sender, EventArgs e)
+            // shows a search form
         {
             SearchForm searchForm = new SearchForm();
             searchForm.Owner = this;
@@ -429,7 +448,7 @@ namespace AleVisor
 
         private void ratingButton_Click(object sender, EventArgs e)
         {
-            if (!rated)
+            if (!rated) // if the beer result[resultIndex] isn't rated yet
             {
                 string[] rows = new string[] { "user_id", "beer_id", "rating" };
                 string[] values = new string[]
@@ -439,7 +458,7 @@ namespace AleVisor
                 "" + userRatingNumericUpDown.Value
                 };
 
-                database.Insert("ratings", rows, values);
+                database.Insert("ratings", rows, values); // we insert the new rating in the database
                 database.UpdateDatabase();
                 loggedUser = database.UpdateUser(loggedUser.id);
 
@@ -450,7 +469,7 @@ namespace AleVisor
                 ratingButton.Text = "Reset rating";
                 ratingButton.Visible = true;
             }
-            else
+            else // if the beer is already rated, the button ad for effect erasing the rating
             {
                 int user_id = loggedUser.id;
                 int beer_id = results[resultIndex].id;
@@ -466,6 +485,7 @@ namespace AleVisor
         }
 
         private void manageButton_Click(object sender, EventArgs e)
+            // shows a management form. Only accessible to a admin user
         {
             RequestManagementForm requestForm = new RequestManagementForm();
             requestForm.Owner = this;

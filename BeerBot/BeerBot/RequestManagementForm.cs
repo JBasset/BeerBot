@@ -13,6 +13,8 @@ namespace AleVisor
 {
     public partial class RequestManagementForm : Form
     {
+        // form used by the admins to validate or refuse requests (and delete them in both cases)
+
         private List<Request> Requests;
         private int RequestIndex = 0;
         private Beer OriginalBeer;
@@ -31,6 +33,7 @@ namespace AleVisor
         }
 
         private void showRequest()
+            // showing the request
         {
             if (Requests.Count > 0)
             {
@@ -60,7 +63,7 @@ namespace AleVisor
                     resultSrmValueLabel.Visible = true;
                     #endregion
 
-                    originalBeerNameLabel.Text = "No original beer";
+                    originalBeerNameLabel.Text = "No original beer"; // we don't need to show the modified beer since the beer proposed is brand new
                     adviceTitleLabel.Text = "Addition request :";
 
                     beerNameLabel.Text = req.name;
@@ -82,7 +85,7 @@ namespace AleVisor
                 else // if the request is a modification of an existing beer
                 {
                     #region setting display
-                    requestLabel.Text = "Adding a new beer";
+                    requestLabel.Text = "Modifying an existing beer";
 
                     originalBeerNameLabel.Visible = true;
                     originalBeerDescriptionLabel.Visible = true;
@@ -100,6 +103,8 @@ namespace AleVisor
                     resultIbuValueLabel.Visible = true;
                     resultSrmValueLabel.Visible = true;
                     #endregion
+
+                    // we show both the original beer without modifications and the proposed modifications
 
                     adviceTitleLabel.Text = "Modification request :";
 
@@ -121,6 +126,7 @@ namespace AleVisor
                     resultIbuValueLabel.Text = "" + req.ibu;
                     resultSrmValueLabel.Text = "" + req.srm;
 
+                    // for every modified field, we show the information in red to make it more visible
                     beerNameLabel.ForeColor = (req.name == OriginalBeer.name) ? Color.White : Color.DarkRed;
                     beerDescriptionLabel.ForeColor = (req.description == OriginalBeer.description) ? Color.White : Color.DarkRed;
                     categoryLabel.ForeColor = (req.category.id == OriginalBeer.category.id) ? Color.White : Color.DarkRed;
@@ -130,7 +136,7 @@ namespace AleVisor
                     resultSrmValueLabel.ForeColor = (req.srm == OriginalBeer.srm) ? Color.White : Color.DarkRed;
                 }
             }
-            else
+            else // if there are no requests left
             {
                 #region setting display
                 requestLabel.Text = "No requests left to show";
@@ -156,11 +162,13 @@ namespace AleVisor
                 deleteButton.Enabled = false;
             }
 
+            // we set the navigation possibilities
             nextButton.Enabled = RequestIndex < Requests.Count - 1;
             previousButton.Enabled = RequestIndex > 0;
         }
 
         private Beer getOriginalBeer()
+            // get the information on the beer before modifications
         {
             Style style = new Style("Unknown Style", -1);
             Category category = new Category("Unknown Category", -1, new List<Style> { style });
@@ -174,10 +182,11 @@ namespace AleVisor
         }
 
         private void updateRequests()
+            // load all the requests in the Requests list
         {
             Requests = (Owner as MainForm).database.getRequests();
             int nb = (Requests.Count == 0) ? 0 : RequestIndex + 1;
-            requestNumberLabel.Text =  "request " + nb + "/" + Requests.Count;
+            requestNumberLabel.Text = nb + "/" + Requests.Count;
             (Owner as MainForm).database.UpdateDatabase();
         }
 
@@ -187,6 +196,7 @@ namespace AleVisor
         }
 
         private void previousButton_Click(object sender, EventArgs e)
+            // decrement the request index and shows the corresponding request
         {
             RequestIndex--;
             updateRequests();
@@ -194,6 +204,7 @@ namespace AleVisor
         }
 
         private void nextButton_Click(object sender, EventArgs e)
+            // increment the request index and shows the corresponding request
         {
             RequestIndex++;
             updateRequests();
@@ -201,6 +212,7 @@ namespace AleVisor
         }
 
         private void deleteRequest()
+            // delete the request
         {
             (Owner as MainForm).database.Execute("DELETE FROM `requests` WHERE `requests`.`id` = " + Requests[RequestIndex].id);
             RequestIndex = 0;
@@ -209,7 +221,9 @@ namespace AleVisor
         }
 
         private void validationButton_Click(object sender, EventArgs e)
+            // add the new data to the database, and deletes the request
         {
+            // we get the request information
             Request req = Requests[RequestIndex];
             string name = req.name;
             string descript = req.description;
@@ -241,19 +255,22 @@ namespace AleVisor
                 descript
             };
 
-            if (req.beer_id == -1)
+            if (req.beer_id == -1) // if the request is adding a beer
             {
-                (Owner as MainForm).database.Insert("beers", rows, values);
+                (Owner as MainForm).database.Insert("beers", rows, values); // we add a new beer with the request informations
             }
-            else
+            else // if the request is modifying an existing beer
             {
-                (Owner as MainForm).database.Update("beers", rows, values, req.beer_id);
+                (Owner as MainForm).database.Update("beers", rows, values, req.beer_id); // we modify all fields of the beer to the request informations
             }
 
+            // we then delete the request and update the database loaded by the application
             deleteRequest();
+            (Owner as MainForm).database.UpdateDatabase();
         }
 
         private void deleteButton_Click(object sender, EventArgs e)
+            // if the delete is denied, we simply delete it
         {
             deleteRequest();
         }

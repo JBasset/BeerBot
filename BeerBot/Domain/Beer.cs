@@ -18,20 +18,6 @@ namespace Domain
         public double ibu { get; private set; } // International Bitterness Unit
         public double srm { get; private set; } // Standard Reference Method (used to codify the color of the beer ; the greater the srm, the darker the beer)
 
-        /*public Beer()
-            // default beer
-        {
-            name = "NAME NOT FOUND";
-            description = "DESCRIPTION NOT FOUND";
-            id = -1;
-            catId = -1;
-            styId = -1;
-            prologName = "unknownBeer";
-            abv = -1;
-            ibu = -1;
-            srm = -1;
-        }*/
-
         public Beer(string name, string description, int id, Category cat, Style sty, double abv, double ibu, double srm)
         {
             this.name = name;

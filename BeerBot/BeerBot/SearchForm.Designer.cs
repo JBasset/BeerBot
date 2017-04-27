@@ -29,6 +29,10 @@
         private void InitializeComponent()
         {
             this.advicePanel = new System.Windows.Forms.Panel();
+            this.styleLabel = new System.Windows.Forms.Label();
+            this.categoryLabel = new System.Windows.Forms.Label();
+            this.sepLabel = new System.Windows.Forms.Label();
+            this.categoryTitleLabel = new System.Windows.Forms.Label();
             this.helpConditionButton = new System.Windows.Forms.Button();
             this.ratingButton = new System.Windows.Forms.Button();
             this.userRatingNumericUpDown = new System.Windows.Forms.NumericUpDown();
@@ -55,10 +59,6 @@
             this.nameSearchTextBox = new System.Windows.Forms.TextBox();
             this.modificationButton = new System.Windows.Forms.Button();
             this.newBeerButton = new System.Windows.Forms.Button();
-            this.sepLabel = new System.Windows.Forms.Label();
-            this.categoryTitleLabel = new System.Windows.Forms.Label();
-            this.categoryLabel = new System.Windows.Forms.Label();
-            this.styleLabel = new System.Windows.Forms.Label();
             this.advicePanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.userRatingNumericUpDown)).BeginInit();
             this.beerDescriptionPanel.SuspendLayout();
@@ -97,6 +97,46 @@
             this.advicePanel.Name = "advicePanel";
             this.advicePanel.Size = new System.Drawing.Size(360, 337);
             this.advicePanel.TabIndex = 5;
+            // 
+            // styleLabel
+            // 
+            this.styleLabel.AutoEllipsis = true;
+            this.styleLabel.Location = new System.Drawing.Point(180, 158);
+            this.styleLabel.Name = "styleLabel";
+            this.styleLabel.Size = new System.Drawing.Size(140, 33);
+            this.styleLabel.TabIndex = 43;
+            this.styleLabel.Text = "label1";
+            this.styleLabel.Visible = false;
+            // 
+            // categoryLabel
+            // 
+            this.categoryLabel.AutoEllipsis = true;
+            this.categoryLabel.Location = new System.Drawing.Point(15, 158);
+            this.categoryLabel.Name = "categoryLabel";
+            this.categoryLabel.Size = new System.Drawing.Size(140, 33);
+            this.categoryLabel.TabIndex = 42;
+            this.categoryLabel.Text = "label1";
+            this.categoryLabel.Visible = false;
+            // 
+            // sepLabel
+            // 
+            this.sepLabel.AutoSize = true;
+            this.sepLabel.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.sepLabel.Location = new System.Drawing.Point(161, 155);
+            this.sepLabel.Name = "sepLabel";
+            this.sepLabel.Size = new System.Drawing.Size(13, 19);
+            this.sepLabel.TabIndex = 41;
+            this.sepLabel.Text = "/";
+            // 
+            // categoryTitleLabel
+            // 
+            this.categoryTitleLabel.AutoSize = true;
+            this.categoryTitleLabel.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.categoryTitleLabel.Location = new System.Drawing.Point(1, 133);
+            this.categoryTitleLabel.Name = "categoryTitleLabel";
+            this.categoryTitleLabel.Size = new System.Drawing.Size(106, 16);
+            this.categoryTitleLabel.TabIndex = 38;
+            this.categoryTitleLabel.Text = "Category / style";
             // 
             // helpConditionButton
             // 
@@ -174,12 +214,12 @@
             // 
             // anotherLabel
             // 
-            this.anotherLabel.AutoSize = true;
-            this.anotherLabel.Location = new System.Drawing.Point(252, 306);
+            this.anotherLabel.Location = new System.Drawing.Point(247, 298);
             this.anotherLabel.Name = "anotherLabel";
-            this.anotherLabel.Size = new System.Drawing.Size(60, 16);
+            this.anotherLabel.Size = new System.Drawing.Size(73, 33);
             this.anotherLabel.TabIndex = 20;
-            this.anotherLabel.Text = "Another !";
+            this.anotherLabel.Text = "0 / 0";
+            this.anotherLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // nextBeerButton
             // 
@@ -386,46 +426,6 @@
             this.newBeerButton.Text = "Can\'t find the beer you\'re looking for ? add it !";
             this.newBeerButton.UseVisualStyleBackColor = false;
             this.newBeerButton.Click += new System.EventHandler(this.newBeerButton_Click);
-            // 
-            // sepLabel
-            // 
-            this.sepLabel.AutoSize = true;
-            this.sepLabel.Font = new System.Drawing.Font("Arial", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.sepLabel.Location = new System.Drawing.Point(161, 155);
-            this.sepLabel.Name = "sepLabel";
-            this.sepLabel.Size = new System.Drawing.Size(13, 19);
-            this.sepLabel.TabIndex = 41;
-            this.sepLabel.Text = "/";
-            // 
-            // categoryTitleLabel
-            // 
-            this.categoryTitleLabel.AutoSize = true;
-            this.categoryTitleLabel.Font = new System.Drawing.Font("Arial", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.categoryTitleLabel.Location = new System.Drawing.Point(1, 133);
-            this.categoryTitleLabel.Name = "categoryTitleLabel";
-            this.categoryTitleLabel.Size = new System.Drawing.Size(106, 16);
-            this.categoryTitleLabel.TabIndex = 38;
-            this.categoryTitleLabel.Text = "Category / style";
-            // 
-            // categoryLabel
-            // 
-            this.categoryLabel.AutoEllipsis = true;
-            this.categoryLabel.Location = new System.Drawing.Point(15, 158);
-            this.categoryLabel.Name = "categoryLabel";
-            this.categoryLabel.Size = new System.Drawing.Size(140, 33);
-            this.categoryLabel.TabIndex = 42;
-            this.categoryLabel.Text = "label1";
-            this.categoryLabel.Visible = false;
-            // 
-            // styleLabel
-            // 
-            this.styleLabel.AutoEllipsis = true;
-            this.styleLabel.Location = new System.Drawing.Point(180, 158);
-            this.styleLabel.Name = "styleLabel";
-            this.styleLabel.Size = new System.Drawing.Size(140, 33);
-            this.styleLabel.TabIndex = 43;
-            this.styleLabel.Text = "label1";
-            this.styleLabel.Visible = false;
             // 
             // SearchForm
             // 

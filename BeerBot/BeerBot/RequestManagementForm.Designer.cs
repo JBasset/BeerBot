@@ -500,12 +500,12 @@
             // 
             // requestNumberLabel
             // 
-            this.requestNumberLabel.AutoSize = true;
-            this.requestNumberLabel.Location = new System.Drawing.Point(230, 67);
+            this.requestNumberLabel.Location = new System.Drawing.Point(230, 59);
             this.requestNumberLabel.Name = "requestNumberLabel";
-            this.requestNumberLabel.Size = new System.Drawing.Size(75, 16);
+            this.requestNumberLabel.Size = new System.Drawing.Size(75, 33);
             this.requestNumberLabel.TabIndex = 51;
-            this.requestNumberLabel.Text = "request X/Y";
+            this.requestNumberLabel.Text = "X/Y";
+            this.requestNumberLabel.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // RequestManagementForm
             // 

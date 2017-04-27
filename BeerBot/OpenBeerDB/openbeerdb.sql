@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Client :  127.0.0.1
--- Généré le :  Ven 17 Mars 2017 à 14:48
+-- Généré le :  Jeu 27 Avril 2017 à 20:01
 -- Version du serveur :  10.1.10-MariaDB
 -- Version de PHP :  5.6.19
 
@@ -48,7 +48,7 @@ CREATE TABLE `beers` (
 
 INSERT INTO `beers` (`id`, `brewery_id`, `name`, `cat_id`, `style_id`, `abv`, `ibu`, `srm`, `upc`, `filepath`, `descript`, `add_user`, `last_mod`) VALUES
 (1, 812, 'Hocus Pocus', 11, 116, 4.5, 0, 0, 0, '', 'Our take on a classic summer ale.  A toast to weeds, rays, and summer haze.  A light, crisp ale for mowing lawns, hitting lazy fly balls, and communing with nature, Hocus Pocus is offered up as a summer sacrifice to clodless days.\r\n\r\nIts malty sweetness finishes tart and crisp and is best apprediated with a wedge of orange.', 0, '2010-07-22 20:00:20'),
-(2, 264, 'Grimbergen Blonde', -1, -1, 6.7, 0, 0, 0, '', '', 0, '2010-07-22 20:00:20'),
+(2, 264, 'Grimbergen Blonde', -1, -1, 6.7, 0, 0, 0, '', 'ardet nec consumitur', 0, '2010-07-22 20:00:20'),
 (3, 779, 'Widdershins Barleywine', -1, -1, 9.1, 0, 0, 0, '', '', 0, '2010-07-22 20:00:20'),
 (4, 287, 'Lucifer', -1, -1, 8.5, 0, 0, 0, '', '', 0, '2010-07-22 20:00:20'),
 (5, 1056, 'Bitter', -1, -1, 4, 0, 0, 0, '', '', 0, '2010-07-22 20:00:20'),
@@ -5971,7 +5971,9 @@ INSERT INTO `beers` (`id`, `brewery_id`, `name`, `cat_id`, `style_id`, `abv`, `i
 (5911, 10, 'Strawberry', 11, 121, 0, 0, 0, 0, '', 'Strawberry Harvest Lager is a wheat beer made with real Louisiana strawberries.', 555, '2011-08-15 11:55:43'),
 (5912, 10, 'Satsuma Wit', 11, 121, 0, 0, 0, 0, '', 'This Wit beer has a sweet and subtle citrus flavor with a touch of spice that is cool and refreshing.', 555, '2011-08-15 11:56:18'),
 (5913, 1422, 'Abhi beer', 7, 89, 0, 0, 0, 0, '', '', 590, '2011-09-27 00:36:14'),
-(5914, 1423, 'Ambr', 11, 132, 0, 0, 0, 0, '', '', 602, '2011-10-04 00:25:39');
+(5914, 1423, 'Ambr', 11, 132, 0, 0, 0, 0, '', '', 602, '2011-10-04 00:25:39'),
+(-1, 0, '', -1, -1, 0, 0, 0, 0, '', '', 0, '0000-00-00 00:00:00'),
+(5918, 0, 'Mont Blanc Verte', 11, 126, 5.9, 20, 5, 0, '', 'Genepi flavored green beer', 0, '0000-00-00 00:00:00');
 
 -- --------------------------------------------------------
 
@@ -6020,37 +6022,56 @@ CREATE TABLE `ratings` (
 --
 
 INSERT INTO `ratings` (`user_id`, `beer_id`, `rating`) VALUES
+(1, 2, 3.5),
 (1, 2222, 4),
 (1, 4253, 3),
 (1, 4339, 1.5),
 (1, 4365, 3.5),
 (1, 4375, 4),
+(1, 4410, 2),
 (1, 5119, 4.5),
 (1, 5221, 4),
 (1, 5232, 4.5),
+(1, 5313, 3.5),
+(1, 5848, 3.25),
+(1, 5886, 3.75),
+(1, 5918, 5),
+(2, 338, 4.5),
 (2, 2222, 4.5),
+(3, 338, 4),
 (3, 2222, 3),
+(4, 338, 3.5),
 (4, 2222, 4),
+(5, 338, 4),
 (5, 2222, 4.5),
+(6, 338, 4),
 (6, 2222, 3.5);
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `social_categories`
+-- Structure de la table `requests`
 --
 
-CREATE TABLE `social_categories` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `name` varchar(40) NOT NULL
+CREATE TABLE `requests` (
+  `id` int(11) NOT NULL,
+  `beer_id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `cat_id` int(11) NOT NULL,
+  `style_id` int(11) NOT NULL,
+  `abv` double NOT NULL,
+  `ibu` double NOT NULL,
+  `srm` double NOT NULL,
+  `descript` varchar(5000) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Contenu de la table `social_categories`
+-- Contenu de la table `requests`
 --
 
-INSERT INTO `social_categories` (`id`, `name`) VALUES
-(1, 'student');
+INSERT INTO `requests` (`id`, `beer_id`, `name`, `cat_id`, `style_id`, `abv`, `ibu`, `srm`, `descript`) VALUES
+(1, 4253, 'Leffe Blonde', 5, -1, 6.6, 0, 0, ''),
+(3, -1, 'Mont Blanc Rousse', 5, -1, 6.5, 0, 0, 'An iron hand in a silk glove... Nominated Best Amber Beer in the world in 2014, this beer is full of contrasts : first taste ample and malted, pursuing on caramel, roasted almonds and a fruity last taste.');
 
 -- --------------------------------------------------------
 
@@ -6222,23 +6243,26 @@ INSERT INTO `styles` (`id`, `cat_id`, `style_name`, `last_mod`) VALUES
 CREATE TABLE `users` (
   `id` int(11) UNSIGNED NOT NULL,
   `name` varchar(40) NOT NULL,
+  `password` varchar(40) NOT NULL,
   `birth_year` int(4) NOT NULL,
   `gender` tinyint(1) NOT NULL COMMENT '0 for man, 1 for woman',
-  `social_cat_id` int(11) UNSIGNED NOT NULL
+  `admin` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Contenu de la table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `birth_year`, `gender`, `social_cat_id`) VALUES
-(1, 'Jean', 1995, 0, 1),
-(2, 'Aubin', 1995, 0, 1),
-(3, 'Aline', 1995, 1, 1),
-(4, 'Marianne', 1996, 1, 1),
-(5, 'Charles', 1992, 0, 1),
-(6, 'Nicolas', 1993, 0, 1),
-(7, 'Default User', 1995, 0, 1);
+INSERT INTO `users` (`id`, `name`, `password`, `birth_year`, `gender`, `admin`) VALUES
+(1, 'Jean', 'password', 1995, 0, 1),
+(2, 'Aubin', 'password', 1995, 0, 0),
+(3, 'Aline', 'password', 1995, 1, 0),
+(4, 'Marianne', 'password', 1996, 1, 0),
+(5, 'Charles', 'password', 1992, 0, 0),
+(6, 'Nicolas', 'password', 1993, 0, 0),
+(7, 'Default User', 'default', 1995, 0, 0),
+(8, 'Arthur', 'password', 1995, 0, 0),
+(13, 'Florian', 'password', 1995, 0, 0);
 
 --
 -- Index pour les tables exportées
@@ -6264,9 +6288,9 @@ ALTER TABLE `ratings`
   ADD KEY `beer_id` (`beer_id`);
 
 --
--- Index pour la table `social_categories`
+-- Index pour la table `requests`
 --
-ALTER TABLE `social_categories`
+ALTER TABLE `requests`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -6289,17 +6313,17 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT pour la table `beers`
 --
 ALTER TABLE `beers`
-  MODIFY `id` int(21) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5915;
+  MODIFY `id` int(21) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5919;
 --
 -- AUTO_INCREMENT pour la table `categories`
 --
 ALTER TABLE `categories`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 --
--- AUTO_INCREMENT pour la table `social_categories`
+-- AUTO_INCREMENT pour la table `requests`
 --
-ALTER TABLE `social_categories`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+ALTER TABLE `requests`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT pour la table `styles`
 --
@@ -6309,7 +6333,7 @@ ALTER TABLE `styles`
 -- AUTO_INCREMENT pour la table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 --
 -- Contraintes pour les tables exportées
 --

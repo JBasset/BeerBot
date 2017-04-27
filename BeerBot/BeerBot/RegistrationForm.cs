@@ -13,6 +13,8 @@ namespace AleVisor
 {
     public partial class RegistrationForm : Form
     {
+        // form used to create a new user, that automatically connects when created
+
         private bool passwordsChecks = false;
 
         public RegistrationForm()
@@ -43,6 +45,7 @@ namespace AleVisor
 
         private void checkPasswords()
         {
+            // check if both passwords are the same
             if (passwordTextBox.Text != "" && repeatPasswordTextBox.Text == passwordTextBox.Text)
             {
                 passwordsChecksLabel.ForeColor = Color.Green;
@@ -53,10 +56,12 @@ namespace AleVisor
             {
                 passwordsChecksLabel.ForeColor = Color.FromArgb(192, 0, 0);
                 passwordsChecksLabel.Text = "X";
+                passwordsChecks = false;
             }
         }
 
         private bool formComplete()
+            // checks if all fields are completed
         {
             return usernameTextBox.Text != "" &&
                 passwordTextBox.Text != "" &&
@@ -64,6 +69,7 @@ namespace AleVisor
         }
 
         private bool availableUsername()
+            // check if the user name doesn't already exists in the database
         {
             foreach(User user in (Owner as ConnectionForm).db.users)
             {
@@ -74,7 +80,9 @@ namespace AleVisor
         }
 
         private void inscriptionButton_Click(object sender, EventArgs e)
+            // finalize the inscription
         {
+            // checking for errors
             if (!formComplete())
             {
                 errorLabel.Text = "Please fill all form fields.";
@@ -105,7 +113,7 @@ namespace AleVisor
                 errorLabel.Text = "The password can't have\nmore than 40 characters.";
                 errorLabel.Visible = true;
             }
-            else
+            else // if no error is encontered, we create the new user and connect him
             {
                 errorLabel.Visible = false;
                 string name = usernameTextBox.Text;
@@ -121,7 +129,7 @@ namespace AleVisor
                         break;
                     }
                 }
-                Close();
+                Close(); // and close the registration form
             }
         }
     }

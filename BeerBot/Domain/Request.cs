@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 namespace Domain
 {
     public class Request
+        // a request has the same characteristic than a beer, except an id of it's own
     {
         public int id { get; private set; }
         public int beer_id { get; private set; }

@@ -8,6 +8,7 @@ using System.IO;
 
 namespace TestProject
 {
+    // this project isn't important for the application : its use is only to test functions from domain on the go
     class Program
     {
         static void Main(string[] args)

@@ -13,13 +13,15 @@ namespace AleVisor
 {
     public partial class RequestForm : Form
     {
+        // form used to submit a modification to the admins
+
         private Beer modifiedBeer;
         private OpenBeerDB database;
 
         public RequestForm(Beer b, OpenBeerDB database)
         {
             InitializeComponent();
-            modifiedBeer = b;
+            modifiedBeer = b; // the beer for which the request asks for a modification. If it is the default beer, (id = -1), the request is adding a beer
             this.database = database;
 
             if (modifiedBeer.id == -1)
@@ -44,6 +46,7 @@ namespace AleVisor
         }
 
         private void showBeer()
+            // show the beer we want to modify
         {
             beernameTextBox.Text = modifiedBeer.name;
             descriptionTextBox.Text = modifiedBeer.description;
@@ -78,6 +81,8 @@ namespace AleVisor
         }
 
         #region check labels
+        // if the entered informations are different from the orginal ones, we show a green validation symbol to signal it
+
         private void beernameTextBox_TextChanged(object sender, EventArgs e)
         {
             beerNameCheckLabel.Visible = (beernameTextBox.Text != modifiedBeer.name);
@@ -117,6 +122,7 @@ namespace AleVisor
         #endregion
 
         private void resetButton_Click(object sender, EventArgs e)
+            // reseting the form to the original informations of the beers
         {
             showBeer();
         }
@@ -127,8 +133,9 @@ namespace AleVisor
         }
 
         private void submitButton_Click(object sender, EventArgs e)
+            // submit the modification
         {
-            if (beernameTextBox.Text != "")
+            if (beernameTextBox.Text != "") // if the beer's name is set
             {
                 string name = (beerNameCheckLabel.Visible) ? beernameTextBox.Text : modifiedBeer.name;
                 string descript = (descriptionCheckLabel.Visible) ? descriptionTextBox.Text : modifiedBeer.description;
@@ -162,8 +169,9 @@ namespace AleVisor
                 descript
                 };
 
-                database.Insert("requests", rows, values);
+                database.Insert("requests", rows, values); // insert a request in the database
 
+                // the user in thanked for his help. We're not savages
                 string msg = "Thank you for your contribution to AleVisor !!";
                 string caption = "Thanks !";
                 MessageBoxButtons button = MessageBoxButtons.OK;
@@ -172,17 +180,18 @@ namespace AleVisor
             }
             else
             {
-                errorLabel.Visible = true;
+                errorLabel.Visible = true; // the minimal information to create a new beer is giving it a name
             }
         }
 
         private void categoryComboBox_SelectedIndexChanged(object sender, EventArgs e)
+            // setting the possible styles for the selected category
         {
             try
             {
                 categoryCheckLabel.Visible = ((categoryComboBox.SelectedItem as Category).id != modifiedBeer.category.id);
             }
-            catch
+            catch // if the cateogry is the unknown category, there can be a exception, catched here
             {
                 categoryCheckLabel.Visible = false;
             }

@@ -13,6 +13,8 @@ namespace AleVisor
 {
     public partial class SearchForm : Form
     {
+        // form used by users to search for beer, by name
+
         private List<Beer> results = new List<Beer> { };
         private int resultIndex = 0;
         private bool rated = false;
@@ -25,6 +27,7 @@ namespace AleVisor
         }
 
         private void searchButton_Click(object sender, EventArgs e)
+            // search beers and load the result
         {
             results = new List<Beer> { };
             resultIndex = 0;
@@ -33,11 +36,11 @@ namespace AleVisor
                 string searchString = nameSearchTextBox.Text;
                 if (searchString.Length <= b.name.Length && b.name.Substring(0,searchString.Length).ToLower() == searchString.ToLower())
                 {
-                    results.Add(b);
+                    results.Add(b); // add all beers corresponding the search string
                 }
             }
 
-            if (results.Count == 0)
+            if (results.Count == 0) // if no beer correspond to the search
             {
                 beerNameLabel.Text = "No results for this search.";
                 modificationButton.Enabled = false;
@@ -49,9 +52,10 @@ namespace AleVisor
                 resultAbvValueLabel.Visible = false;
                 beerNameLabel.Visible = true;
             }
-            else
+            else // show the result
             {
                 showResult();
+                anotherLabel.Text = (resultIndex+1) + " / " + results.Count;
                 resultSrmLabel.Visible = true;
                 resultIbuLabel.Visible = true;
                 resultAbvLabel.Visible = true;
@@ -60,6 +64,7 @@ namespace AleVisor
         }
 
         private void showResult()
+            // show the result of the search
         {
             beerNameLabel.Text = results[resultIndex].name;
             beerDescriptionLabel.Text = (results[resultIndex].description == "") ? "No description provided." : results[resultIndex].description;
@@ -85,7 +90,7 @@ namespace AleVisor
             rated = false;
             foreach (double[] rating in (Owner as MainForm).loggedUser.ratings)
             {
-                if (rating[0] == results[resultIndex].id)
+                if (rating[0] == results[resultIndex].id) // if we find the user's rating for this beer
                 {
                     rated = true;
                     userRatingLabel.Text = "" + rating[1];
@@ -96,7 +101,7 @@ namespace AleVisor
                     break;
                 }
             }
-            if (!rated)
+            if (!rated) // if the user has not rated the beer yet
             {
                 userRatingLabel.Visible = false;
                 userRatingNumericUpDown.Visible = true;
@@ -104,27 +109,33 @@ namespace AleVisor
                 ratingButton.Visible = true;
             }
 
+            // setting the navigation possibilities
             previousBeerButton.Enabled = resultIndex > 0;
             nextBeerButton.Enabled = resultIndex < results.Count - 1;
         }
 
         private void nextBeerButton_Click(object sender, EventArgs e)
+            // we increment the result index, and show the corresponding beer
         {
             resultIndex++;
             userRatingNumericUpDown.Value = 0;
             showResult();
+            anotherLabel.Text = (resultIndex+1) + " / " + results.Count;
         }
 
         private void previousBeerButton_Click(object sender, EventArgs e)
+            // we decrement the result index, and show the corresponding beer
         {
             resultIndex--;
             userRatingNumericUpDown.Value = 0;
             showResult();
+            anotherLabel.Text = (resultIndex+1) + " / " + results.Count;
         }
 
         private void ratingButton_Click(object sender, EventArgs e)
+            // sets or unsets the rating of the beer
         {
-            if (!rated)
+            if (!rated) // if the beer isn't rated by the user yet
             {
                 string[] rows = new string[] { "user_id", "beer_id", "rating" };
                 string[] values = new string[]
@@ -134,6 +145,7 @@ namespace AleVisor
                 "" + userRatingNumericUpDown.Value
                 };
 
+                // we add the rating to the database
                 (Owner as MainForm).database.Insert("ratings", rows, values);
                 (Owner as MainForm).database.UpdateDatabase();
                 (Owner as MainForm).loggedUser = (Owner as MainForm).database.UpdateUser((Owner as MainForm).loggedUser.id);
@@ -145,7 +157,7 @@ namespace AleVisor
                 ratingButton.Text = "Reset rating";
                 ratingButton.Visible = true;
             }
-            else
+            else // if the user already rated this beer, this button deletes the existing rating
             {
                 int user_id = (Owner as MainForm).loggedUser.id;
                 int beer_id = results[resultIndex].id;
@@ -181,6 +193,7 @@ namespace AleVisor
         }
 
         private void modificationButton_Click(object sender, EventArgs e)
+            // shows a request form, with the beer results[resultIndex] in argument
         {
             RequestForm requestForm = new RequestForm(results[resultIndex], (Owner as MainForm).database);
             requestForm.Disposed += RequestForm_Disposed;
@@ -196,6 +209,7 @@ namespace AleVisor
         }
 
         private void newBeerButton_Click(object sender, EventArgs e)
+            // shows a request form, with the default beer in argument
         {
             Style style = new Style("Unknown Style", -1);
             Category category = new Category("Unknown Category", -1, new List<Style> { style });
